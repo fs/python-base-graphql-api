@@ -1,0 +1,12 @@
+flake8
+wemake-python-styleguide
+flake8-pytest-style
+flake8-django
+flake8-logging-format
+
+Django==3.2.3
+graphene==2.1.8
+graphene-django==2.15.0
+django-graphql-jwt
+python-decouple==3.4
+
