@@ -1,6 +1,6 @@
 import graphene
 from django.contrib.auth import get_user_model
-from .types import UserType
+from users.types import UserType
 
 User = get_user_model()
 

@@ -2,6 +2,7 @@ import graphene
 import graphql_jwt
 import users.graphql.query
 import users.graphql.mutation
+import users.jwt_authentication.mutations
 
 from graphene_django.debug import DjangoDebug
 
@@ -15,11 +16,9 @@ class Query(
 
 class Mutation(
     graphene.ObjectType,
-    users.graphql.mutation.Mutation
+    users.jwt_authentication.mutations.Mutation
                ):
-    token_auth = graphql_jwt.ObtainJSONWebToken.Field()
-    verify_token = graphql_jwt.Verify.Field()
-    refresh_token = graphql_jwt.Refresh.Field()
+    pass
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

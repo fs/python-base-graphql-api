@@ -18,6 +18,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'graphene_django',
+    'graphql_jwt',
     'users',
 ]
 
@@ -121,3 +122,10 @@ GRAPHENE = {
         'graphql_jwt.middleware.JSONWebTokenMiddleware',
     ],
 }
+
+GRAPHQL_JWT = {
+    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+    'JWT_COOKIE_NAME': 'Bearer',
+    'JWT_REFRESH_TOKEN_COOKIE_NAME': 'refreshToken',
+}
+
