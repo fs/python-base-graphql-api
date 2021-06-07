@@ -2,12 +2,12 @@ import graphene
 from ..types import UserType
 
 
-class AuthenticationMixin:
+class AuthenticationOutput(graphene.ObjectType):
 
     class Meta:
         name = 'Authentication'
 
-    token = graphene.String()
+    token = graphene.String(name='accessToken')
     me = graphene.Field(UserType)
     refresh_token = graphene.String(name='refreshToken')
 
@@ -15,9 +15,12 @@ class AuthenticationMixin:
     def resolve_me(_, info):
         return info.context.user
 
-    @staticmethod
-    def resolve_refresh_token(obj, info):
 
-        return "LOL"
+class SignOutOutput(graphene.ObjectType):
+    class Meta:
+        name = 'Message'
+
+    message = graphene.String()
+
 
 

@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'graphene_django',
     'graphql_jwt',
+    'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
     'users',
 ]
 
@@ -127,5 +128,6 @@ GRAPHQL_JWT = {
     'JWT_AUTH_HEADER_PREFIX': 'Bearer',
     'JWT_COOKIE_NAME': 'Bearer',
     'JWT_REFRESH_TOKEN_COOKIE_NAME': 'refreshToken',
+    'JWT_LONG_RUNNING_REFRESH_TOKEN': True,
 }
 

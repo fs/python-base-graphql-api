@@ -11,15 +11,24 @@ class UpdatePasswordInput(graphene.InputObjectType):
     reset_token = graphene.String(required=True, name='resetToken')
 
 
+class SignOutInput(graphene.InputObjectType):
+    everywhere = graphene.Boolean()
+
+
 class ImageUploader(graphene.InputObjectType):
     id = graphene.String(required=True)
     storage = graphene.String(default='cache')
 
 
-class UpdateUserInput(graphene.InputObjectType):
+class SignUpInput(graphene.InputObjectType):
     email = graphene.String()
     first_name = graphene.String(name='firstName')
     last_name = graphene.String(name='lastName')
-    current_password = graphene.String(name='currentPassword')
     password = graphene.String()
     # avatar = graphene.Field()
+
+
+class UpdateUserInput(SignUpInput):
+    current_password = graphene.String(name='currentPassword')
+
+
