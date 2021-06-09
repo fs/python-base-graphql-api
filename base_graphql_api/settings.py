@@ -20,7 +20,9 @@ INSTALLED_APPS = [
     'graphene_django',
     'graphql_jwt',
     'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
+    'users.jwt_authentication',
     'users',
+
 ]
 
 MIDDLEWARE = [
@@ -126,8 +128,9 @@ GRAPHENE = {
 
 GRAPHQL_JWT = {
     'JWT_AUTH_HEADER_PREFIX': 'Bearer',
-    'JWT_COOKIE_NAME': 'Bearer',
+    'JWT_AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
     'JWT_REFRESH_TOKEN_COOKIE_NAME': 'refreshToken',
     'JWT_LONG_RUNNING_REFRESH_TOKEN': True,
+    'JWT_REFRESH_TOKEN_MODEL': 'jwt_authentication.RefreshToken',
 }
 

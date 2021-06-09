@@ -15,7 +15,7 @@ class Mutation(
     graphene.ObjectType,
     users.jwt_authentication.mutations.Mutation
                ):
-    pass
+    debug = graphene.Field(DjangoDebug, name='_debug')
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

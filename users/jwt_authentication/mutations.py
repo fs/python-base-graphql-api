@@ -2,6 +2,7 @@ import graphql_jwt
 import graphene
 
 from graphql_jwt.shortcuts import create_refresh_token, get_token
+from graphql_jwt.decorators import login_required
 from django.contrib.auth import get_user_model
 from .outputs import AuthenticationOutput, SignOutOutput
 from .inputs import SignInInput, SignUpInput, SignOutInput
@@ -52,16 +53,28 @@ class SignOut(graphene.Mutation):
     def mutate(cls, root, info, input):
         everywhere = input.get('everywhere')
         if everywhere:
-            for token in info.context.user.refresh_tokens.all():
+            for token in info.context.user.jwt_refresh_tokens.all():
                 token.revoke()
         else:
             info.context.jwt_refresh_token.revoke()
         return cls.Output(message="Success")
 
 
+class UpdateToken(graphql_jwt.Refresh, graphene.Mutation):
+    Output = AuthenticationOutput
+
+    class Arguments:
+        pass
+
+    @classmethod
+    def mutate(cls, root, info):
+        return super(UpdateToken, cls).mutate(root, info)
+
+
 class Mutation:
     sign_in = SignIn.Field(name='signin')
     sign_up = SignUp.Field(name='signup')
     sign_out = SignOut.Field(name='signout')
+    update_token = UpdateToken.Field(name='updateToken')
 
 
