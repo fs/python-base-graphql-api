@@ -1,5 +1,5 @@
 import graphene
-from ..types import UserType
+from users.types import UserType
 
 
 class AuthenticationOutput(graphene.ObjectType):
@@ -7,13 +7,9 @@ class AuthenticationOutput(graphene.ObjectType):
     class Meta:
         name = 'Authentication'
 
-    token = graphene.String(name='accessToken')
-    me = graphene.Field(UserType)
+    access_token = graphene.String(name='accessToken')
     refresh_token = graphene.String(name='refreshToken')
-
-    @staticmethod
-    def resolve_me(_, info):
-        return info.context.user
+    me = graphene.Field(UserType)
 
 
 class SignOutOutput(graphene.ObjectType):

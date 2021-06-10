@@ -1,5 +1,6 @@
 from pathlib import Path
 from decouple import config
+from datetime import timedelta
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -18,8 +19,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'graphene_django',
-    'graphql_jwt',
-    'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
     'users.jwt_authentication',
     'users',
 
@@ -74,7 +73,7 @@ DATABASES = {
 AUTH_USER_MODEL = 'users.User'
 
 AUTHENTICATION_BACKENDS = [
-    'graphql_jwt.backends.JSONWebTokenBackend',
+    'users.jwt_authentication.backends.JSONWebTokenBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
 
@@ -122,15 +121,23 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 GRAPHENE = {
     'SCHEMA': 'base_graphql_api.schema.schema',
     'MIDDLEWARE': [
-        'graphql_jwt.middleware.JSONWebTokenMiddleware',
+        'graphene_django.debug.DjangoDebugMiddleware',
+        # 'graphql_jwt.middleware.JSONWebTokenMiddleware',
     ],
 }
 
-GRAPHQL_JWT = {
-    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+JWT_SETTINGS = {
+    'REFRESH_TOKEN_EXPIRATION_DELTA': timedelta(days=30),
+    'ACCESS_TOKEN_EXPIRATION_DELTA': timedelta(hours=1),
     'JWT_AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
     'JWT_REFRESH_TOKEN_COOKIE_NAME': 'refreshToken',
-    'JWT_LONG_RUNNING_REFRESH_TOKEN': True,
-    'JWT_REFRESH_TOKEN_MODEL': 'jwt_authentication.RefreshToken',
+    'JWT_SECRET_KEY': SECRET_KEY,
+    'JWT_ALGORITHM': 'HS256',
+    'JWT_VERIFY_EXPIRATION': False,
+    'JWT_AUDIENCE': None,
+    'JWT_VERIFY': True,
+    'JWT_ISSUER': None,
+    'JWT_LEEWAY': 0,
 }
 
