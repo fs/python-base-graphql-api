@@ -10,21 +10,16 @@ User = get_user_model()
 jwt_settings = settings.JWT_SETTINGS
 
 
-def jwt_payload(user, expires, token_type, orig_iat=None):
-
-    if not orig_iat:
-        orig_iat = datetime.now()
-
+def jwt_payload(user, expires, jti, token_type):
     return {
         "sub": user.id,
         "exp": timegm(expires.utctimetuple()),
-        "jti": jti(user, orig_iat),
+        "jti": jti,
         "type": token_type,
     }
 
 
 def get_user_by_access_token(token):
-
     payload = jwt_decode(token)
 
     if payload.get('exp') < timegm(datetime.utcnow().utctimetuple()):
@@ -35,7 +30,6 @@ def get_user_by_access_token(token):
 
 
 def jwt_encode(payload):
-
     return jwt.encode(
         payload,
         jwt_settings.get('JWT_SECRET_KEY'),
@@ -60,16 +54,7 @@ def jwt_decode(token):
     )
 
 
-def jti(user, orig_iat):
-
-    m = hashlib.new('MD5')
-    m.update(f'{user.id}-{timegm(orig_iat.utctimetuple())}'.encode('utf-8'))
-
-    return m.hexdigest()
-
-
 def get_access_token_by_request(request):
-
     auth = request.META.get(jwt_settings.get('JWT_AUTH_HEADER_NAME'), '').split()
     prefix = jwt_settings.get('JWT_AUTH_HEADER_PREFIX')
 
@@ -80,5 +65,25 @@ def get_access_token_by_request(request):
 
 
 def get_refresh_token_by_request(request):
-
     return request.META.get(jwt_settings.get('JWT_REFRESH_TOKEN_COOKIE_NAME'))
+
+
+def set_cookie(response, key, value, expires):
+    kwargs = {
+        'expires': expires,
+        'httponly': True,
+        'secure': False,
+        'path': '/',
+        'domain': None,
+        'samesite': None,
+    }
+
+    response.set_cookie(key, value, **kwargs)
+
+
+def delete_cookie(response, key):
+    response.delete_cookie(
+        key,
+        path='/',
+        domain=None,
+    )
