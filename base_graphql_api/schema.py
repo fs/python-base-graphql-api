@@ -1,6 +1,5 @@
 import graphene
-import graphql_jwt
-import users.jwt_authentication.mutations
+import users.mutations
 
 from graphene_django.debug import DjangoDebug
 
@@ -13,7 +12,7 @@ class Query(
 
 class Mutation(
     graphene.ObjectType,
-    users.jwt_authentication.mutations.Mutation
+    users.mutations.Mutation
                ):
     debug = graphene.Field(DjangoDebug, name='_debug')
 

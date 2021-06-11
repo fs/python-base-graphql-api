@@ -65,7 +65,7 @@ def get_access_token_by_request(request):
 
 
 def get_refresh_token_by_request(request):
-    return request.META.get(jwt_settings.get('JWT_REFRESH_TOKEN_COOKIE_NAME'))
+    return request.COOKIES.get(jwt_settings.get('JWT_REFRESH_TOKEN_COOKIE_NAME'))
 
 
 def set_cookie(response, key, value, expires):

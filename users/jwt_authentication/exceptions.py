@@ -17,3 +17,7 @@ class PermissionDenied(JSONWebTokenError):
 
 class JSONWebTokenExpired(JSONWebTokenError):
     default_message = _('Signature has expired')
+
+
+class InvalidCredentials(JSONWebTokenError):
+    default_message =  _('Invalid credentials')

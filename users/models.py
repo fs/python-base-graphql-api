@@ -1,8 +1,10 @@
-from django.db import models
-from django.contrib.auth.models import AbstractUser, UserManager
 from django.apps import apps
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import AbstractUser, UserManager
+from django.db import models
 from django.utils.translation import gettext_lazy as _
+from utils.aws_images_storage import AvatarStorage
+from django.conf import settings
 
 
 class UserQuerySet(UserManager):
@@ -45,12 +47,17 @@ class UserQuerySet(UserManager):
 
 class User(AbstractUser):
     email = models.EmailField(_('email address'), unique=True)
+    avatar = models.ImageField(null=True, blank=True, storage=AvatarStorage())
 
     objects = UserQuerySet()
 
     USERNAME_FIELD = 'email'
     username = None
     REQUIRED_FIELDS = []
+
+    def save_image(self, folder, filename):
+        self.avatar.name = f'{folder}/{filename}'
+        self.save()
 
 
 class UserActivity(models.Model):

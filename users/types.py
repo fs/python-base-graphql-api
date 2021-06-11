@@ -6,9 +6,9 @@ User = get_user_model()
 
 
 class UserType(DjangoObjectType):
-    avatarUrl = graphene.String(source='avatar')
-    firstName = graphene.String(source='first_name')
-    lastName = graphene.String(source='last_name')
+    avatar = graphene.String(name='avatarUrl')
+    last_name = graphene.String(name='lastName')
+    first_name = graphene.String(name='firstName')
 
     class Meta:
         model = User

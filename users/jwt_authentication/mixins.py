@@ -2,6 +2,9 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from .utils import jwt_encode
 from .models import RefreshToken
+from .exceptions import InvalidCredentials
+from django.forms.models import model_to_dict
+from users.types import UserType
 
 jwt_settings = settings.JWT_SETTINGS
 User = get_user_model()
@@ -22,21 +25,69 @@ class ObtainPairMixin:
         }
 
 
-class RevokeAccessTokenMixin:
-    def logout(self, request, everywhere=False):
+class RevokeTokenMixin:
+
+    @classmethod
+    def logout(cls, request, everywhere=False):
+        if not hasattr(request, 'user') or not hasattr(request, 'refresh_token'):
+            return None
+
         if everywhere:
             RefreshToken.objects.revoke_all_for_user(request.user)
         else:
             request.refresh_token.revoke()
 
 
-class UpdateAccessTokenMixin(ObtainPairMixin):
+class UpdateTokenPairMixin(ObtainPairMixin):
 
     @classmethod
-    def update_access_token(cls, request):
+    def update_pair(cls, request):
         request.refresh_token.revoke()
         return cls.generate_pair(request.user)
 
+
+class UpdateUserMixin:
+
+    @staticmethod
+    def change_password(user, current_password, password):
+        password_is_true = user.check_password(current_password)
+
+        if not password_is_true:
+            raise InvalidCredentials()
+
+        user.set_password(password)
+
+    @classmethod
+    def update_user(cls, request, input):
+        user = request.user
+        current_password = input.pop('current_password')
+        password = input.pop('password')
+
+        if current_password and password:
+            cls.change_password(user, current_password, password)
+
+        for key in input:
+            setattr(user, key, input[key])
+
+        user.save()
+        return model_to_dict(user, input.keys())
+
+
+class ImageMixin:
+
+    @classmethod
+    def get_presign_upload(cls, user, filename, file_type):
+
+        return user.avatar.storage.bucket.meta.client.generate_presigned_post(
+            Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+            Key=filename,
+            Fields={"acl": "public-read", "Content-Type": file_type},
+            Conditions=[
+                {"acl": "public-read"},
+                {"Content-Type": file_type},
+            ],
+            ExpiresIn=3600
+        )
 
 
 
