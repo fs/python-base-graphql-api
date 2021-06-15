@@ -87,3 +87,10 @@ def delete_cookie(response, key):
         path='/',
         domain=None,
     )
+
+
+def generate_hash(val):
+    m = hashlib.new('MD5')
+    m.update(val.encode('utf-8'))
+    return m.hexdigest()
+

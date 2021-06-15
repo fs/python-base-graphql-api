@@ -15,3 +15,6 @@ class UserType(DjangoObjectType):
         name = 'User'
         fields = ('id', 'email')
 
+    def resolve_avatar(self, info):
+        return self.avatar.url
+

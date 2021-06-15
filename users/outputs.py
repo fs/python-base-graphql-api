@@ -1,15 +1,8 @@
 import graphene
 from users.types import UserType
 
-#
-# class UserOutput(UserType):
-#
-#     class Meta(UserType.Meta):
-#         name = 'UserOutput'
-
 
 class AuthenticationOutput(graphene.ObjectType):
-
     class Meta:
         name = 'Authentication'
 
@@ -31,7 +24,6 @@ class PresignField(graphene.ObjectType):
 
 
 class PresignAWSImageUploadOutput(graphene.ObjectType):
-
     class Meta:
         name = 'Presign'
 

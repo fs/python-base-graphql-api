@@ -4,7 +4,6 @@ from .utils import jwt_encode
 from .models import RefreshToken
 from .exceptions import InvalidCredentials
 from django.forms.models import model_to_dict
-from users.types import UserType
 
 jwt_settings = settings.JWT_SETTINGS
 User = get_user_model()
@@ -57,11 +56,19 @@ class UpdateUserMixin:
 
         user.set_password(password)
 
+    @staticmethod
+    def update_avatar(user, avatar):
+        user.avatar.save(avatar.get("id"), content=None)
+
     @classmethod
     def update_user(cls, request, input):
         user = request.user
         current_password = input.pop('current_password')
         password = input.pop('password')
+        avatar = input.pop('avatar')
+
+        if avatar:
+            cls.update_avatar(user, avatar)
 
         if current_password and password:
             cls.change_password(user, current_password, password)
@@ -70,25 +77,15 @@ class UpdateUserMixin:
             setattr(user, key, input[key])
 
         user.save()
-        return model_to_dict(user, input.keys())
+        user_fields = list(input.keys()) + ['id', 'avatar']
+        return model_to_dict(user, user_fields)
 
 
-class ImageMixin:
+class ImagePresignMixin:
 
     @classmethod
     def get_presign_upload(cls, user, filename, file_type):
-
-        return user.avatar.storage.bucket.meta.client.generate_presigned_post(
-            Bucket=settings.AWS_STORAGE_BUCKET_NAME,
-            Key=filename,
-            Fields={"acl": "public-read", "Content-Type": file_type},
-            Conditions=[
-                {"acl": "public-read"},
-                {"Content-Type": file_type},
-            ],
-            ExpiresIn=3600
-        )
-
+        return user.avatar.storage.generate_presigned_post(filename, file_type)
 
 
 

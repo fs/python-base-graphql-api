@@ -1,10 +1,8 @@
-import hashlib
-
 from calendar import timegm
 from django.db import models
 from django.contrib.auth import get_user_model
 from datetime import datetime
-from .utils import jwt_encode, jwt_decode, jwt_payload
+from .utils import jwt_encode, jwt_decode, jwt_payload, generate_hash
 from django.conf import settings
 from django.utils import timezone
 
@@ -59,9 +57,8 @@ class RefreshToken(models.Model):
 
     @staticmethod
     def generate_jti(user, created_at):
-        m = hashlib.new('MD5')
-        m.update(f'{user.id}-{timegm(created_at.utctimetuple())}'.encode('utf-8'))
-        return m.hexdigest()
+        key = f'{user.id}-{timegm(created_at.utctimetuple())}'
+        return generate_hash(key)
 
     def revoke(self):
         self.revoked_at = datetime.now()

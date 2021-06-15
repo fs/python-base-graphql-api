@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth import authenticate
+from django.contrib.auth.models import AnonymousUser
 from .models import RefreshToken
 from .utils import (get_user_by_access_token, get_access_token_by_request, get_refresh_token_by_request)
 
@@ -34,6 +35,10 @@ class TokenAuthenticationMiddleware:
 
             context.user = user
             context.refresh_token = refresh_token_instance
+
+        else:
+            context.user = AnonymousUser()
+            context.refresh_token = None
 
         return next(root, info, **kwargs)
 

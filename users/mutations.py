@@ -4,8 +4,9 @@ from django.contrib.auth import authenticate, get_user_model
 
 from users.inputs import SignInInput, SignUpInput, SignOutInput, UpdateUserInput, PresignAWSImageUploadInput
 from users.outputs import AuthenticationOutput, SignOutOutput, UserType, PresignAWSImageUploadOutput
-from users.jwt_authentication.mixins import ObtainPairMixin, RevokeTokenMixin, UpdateTokenPairMixin, UpdateUserMixin, ImageMixin
+from users.jwt_authentication.mixins import ObtainPairMixin, RevokeTokenMixin, UpdateTokenPairMixin, UpdateUserMixin, ImagePresignMixin
 from users.jwt_authentication.decorators import login_required
+from .jwt_authentication.exceptions import InvalidCredentials
 
 User = get_user_model()
 
@@ -19,6 +20,9 @@ class SignIn(ObtainPairMixin, graphene.Mutation):
     @classmethod
     def mutate(cls, _, info, input):
         user = authenticate(info.context, **input)
+        if not user:
+            raise InvalidCredentials()
+
         tokens = cls.generate_pair(user)
         return cls.Output(me=user, **tokens)
 
@@ -31,7 +35,7 @@ class SignUp(ObtainPairMixin, graphene.Mutation):
 
     @classmethod
     def mutate(cls, _, info, input):
-        user = User.objects.create(**input)
+        user = User.objects.create_user(**input)
         tokens = cls.generate_pair(user)
         return cls.Output(me=user, **tokens)
 
@@ -59,7 +63,7 @@ class SignOut(RevokeTokenMixin, graphene.Mutation):
         return cls.Output(message='Success')
 
 
-class UpdateUser(ImageMixin, UpdateUserMixin, graphene.Mutation):
+class UpdateUser(ImagePresignMixin, UpdateUserMixin, graphene.Mutation):
     Output = UserType
 
     class Arguments:
@@ -68,19 +72,18 @@ class UpdateUser(ImageMixin, UpdateUserMixin, graphene.Mutation):
     @classmethod
     @login_required
     def mutate(cls, _, info, input):
-        user_dict = cls.update_user(info.context, input)
-        info.context.user.save_image()
-
-        return cls.Output(**user_dict)
+        cls.update_user(info.context, input)
+        return info.context.user
 
 
-class PresignImageUpload(ImageMixin, graphene.Mutation):
+class PresignImagePresignUpload(ImagePresignMixin, graphene.Mutation):
     Output = PresignAWSImageUploadOutput
 
     class Arguments:
         input = PresignAWSImageUploadInput(required=True)
 
     @classmethod
+    @login_required
     def mutate(cls, _, info, input):
         presign = cls.get_presign_upload(info.context.user, **input)
         url = presign.get('url')
@@ -99,6 +102,6 @@ class Mutation:
     sign_out = SignOut.Field(name='signout')
     update_tokens = UpdateTokenPair.Field(name='updateToken')
     update_user = UpdateUser.Field(name='updateUser')
-    presign_image_upload = PresignImageUpload.Field(name='presignData')
+    presign_image_upload = PresignImagePresignUpload.Field(name='presignData')
 
 

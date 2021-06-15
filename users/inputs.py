@@ -26,7 +26,7 @@ class UpdatePasswordInput(graphene.InputObjectType):
 class ImageUploaderMetadata(graphene.InputObjectType):
     size = graphene.Int(required=True)
     filename = graphene.String(required=True)
-    mime_type = graphene.String(required=True, name='mineType')
+    mime_type = graphene.String(required=True, name='mimeType')
 
 
 class ImageUploader(graphene.InputObjectType):

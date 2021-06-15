@@ -7,7 +7,6 @@ flake8-logging-format
 Django
 graphene==2.1.8
 graphene-django==2.15.0
-django-graphql-jwt==0.3.2
 PyJWT==1.7.0
 python-decouple==3.4
 Pillow==8.2.0
