@@ -1,21 +1,21 @@
 import graphene
 
 from django.contrib.auth import authenticate, get_user_model
-
-from users.inputs import SignInInput, SignUpInput, SignOutInput, UpdateUserInput, PresignAWSImageUploadInput
-from users.outputs import AuthenticationOutput, SignOutOutput, UserType, PresignAWSImageUploadOutput
-from users.jwt_authentication.mixins import ObtainPairMixin, RevokeTokenMixin, UpdateTokenPairMixin, UpdateUserMixin, ImagePresignMixin
+from users import inputs, outputs
+from users.jwt_authentication import mixins
 from users.jwt_authentication.decorators import login_required
 from .jwt_authentication.exceptions import InvalidCredentials
+from .models import UserActivity
+from .signals import user_activity_signal
 
 User = get_user_model()
 
 
-class SignIn(ObtainPairMixin, graphene.Mutation):
-    Output = AuthenticationOutput
+class SignIn(mixins.ObtainPairMixin, graphene.Mutation):
+    Output = outputs.AuthenticationOutput
 
     class Arguments:
-        input = SignInInput(required=True)
+        input = inputs.SignInInput(required=True)
 
     @classmethod
     def mutate(cls, _, info, input):
@@ -24,24 +24,26 @@ class SignIn(ObtainPairMixin, graphene.Mutation):
             raise InvalidCredentials()
 
         tokens = cls.generate_pair(user)
+        user_activity_signal.send(cls, user=user, activity=UserActivity.USER_LOGGED_IN)
         return cls.Output(me=user, **tokens)
 
 
-class SignUp(ObtainPairMixin, graphene.Mutation):
-    Output = AuthenticationOutput
+class SignUp(mixins.ObtainPairMixin, graphene.Mutation):
+    Output = outputs.AuthenticationOutput
 
     class Arguments:
-        input = SignUpInput(required=True)
+        input = inputs.SignUpInput(required=True)
 
     @classmethod
     def mutate(cls, _, info, input):
         user = User.objects.create_user(**input)
         tokens = cls.generate_pair(user)
+        user_activity_signal.send(cls, user=user, activity=UserActivity.USER_REGISTERED)
         return cls.Output(me=user, **tokens)
 
 
-class UpdateTokenPair(UpdateTokenPairMixin, graphene.Mutation):
-    Output = AuthenticationOutput
+class UpdateTokenPair(mixins.UpdateTokenPairMixin, graphene.Mutation):
+    Output = outputs.AuthenticationOutput
 
     @classmethod
     @login_required
@@ -50,11 +52,11 @@ class UpdateTokenPair(UpdateTokenPairMixin, graphene.Mutation):
         return cls.Output(me=info.context.user, **tokens)
 
 
-class SignOut(RevokeTokenMixin, graphene.Mutation):
-    Output = SignOutOutput
+class SignOut(mixins.RevokeTokenMixin, graphene.Mutation):
+    Output = outputs.SignOutOutput
 
     class Arguments:
-        input = SignOutInput(required=True)
+        input = inputs.SignOutInput(required=True)
 
     @classmethod
     def mutate(cls, _, info, input):
@@ -63,24 +65,26 @@ class SignOut(RevokeTokenMixin, graphene.Mutation):
         return cls.Output(message='Success')
 
 
-class UpdateUser(ImagePresignMixin, UpdateUserMixin, graphene.Mutation):
-    Output = UserType
+class UpdateUser(mixins.ImagePresignMixin, mixins.UpdateUserMixin, graphene.Mutation):
+    Output = outputs.UserType
 
     class Arguments:
-        input = UpdateUserInput(required=True)
+        input = inputs.UpdateUserInput(required=True)
 
     @classmethod
     @login_required
     def mutate(cls, _, info, input):
-        cls.update_user(info.context, input)
-        return info.context.user
+        context = info.context
+        cls.update_user(context, input)
+        user_activity_signal.send(cls, user=context.user, activity=UserActivity.USER_UPDATED)
+        return context.user
 
 
-class PresignImagePresignUpload(ImagePresignMixin, graphene.Mutation):
-    Output = PresignAWSImageUploadOutput
+class PresignImagePresignUpload(mixins.ImagePresignMixin, graphene.Mutation):
+    Output = outputs.PresignAWSImageUploadOutput
 
     class Arguments:
-        input = PresignAWSImageUploadInput(required=True)
+        input = inputs.PresignAWSImageUploadInput(required=True)
 
     @classmethod
     @login_required
@@ -88,12 +92,42 @@ class PresignImagePresignUpload(ImagePresignMixin, graphene.Mutation):
         presign = cls.get_presign_upload(info.context.user, **input)
         url = presign.get('url')
         fields = presign.get('fields')
-        fields_out = []
-
-        for key in fields:
-            fields_out.append({"key": key, "value": fields[key]})
-
+        fields_out = [{"key": key, "value": fields[key]} for key in fields]
         return cls.Output(url=url, fields=fields_out)
+
+
+class RequestPasswordRecovery(mixins.PasswordRecoveryMixin, graphene.Mutation):
+    Output = outputs.PasswordRecoveryOutput
+
+    class Arguments:
+        input = inputs.PasswordRecoveryInput(required=True)
+
+    @classmethod
+    def mutate(cls, _, info, input):
+        email = input.get('email')
+        cls.recovery(email)
+        message = 'Instructions sent'
+        detail = 'Password recovery instructions were sent if that account exists'
+
+        user = User.objects.filter(email=email)
+        if user.exists():
+            user_activity_signal.send(cls, user=user[0], activity=UserActivity.RESET_PASSWORD_REQUESTED)
+
+        return cls.Output(message=message, detail=detail)
+
+
+class UpdatePassword(mixins.ObtainPairMixin, mixins.UpdatePasswordMixin, graphene.Mutation):
+    Output = outputs.AuthenticationOutput
+
+    class Arguments:
+        input = inputs.UpdatePasswordInput(required=True)
+
+    @classmethod
+    def mutate(cls, _, __, input):
+        user = cls.update_password(**input)
+        tokens = cls.generate_pair(user)
+        user_activity_signal.send(cls, user=user, activity=UserActivity.USER_RESET_PASSWORD)
+        return cls.Output(me=user, **tokens)
 
 
 class Mutation:
@@ -103,5 +137,5 @@ class Mutation:
     update_tokens = UpdateTokenPair.Field(name='updateToken')
     update_user = UpdateUser.Field(name='updateUser')
     presign_image_upload = PresignImagePresignUpload.Field(name='presignData')
-
-
+    request_password_recovery = RequestPasswordRecovery.Field(name='requestPasswordRecovery')
+    update_password = UpdatePassword.Field(name='updatePassword')

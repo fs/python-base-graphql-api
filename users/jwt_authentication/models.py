@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from datetime import datetime
 from .utils import jwt_encode, jwt_decode, jwt_payload, generate_hash
+from utils.email import send_recovery_email
 from django.conf import settings
 from django.utils import timezone
 
@@ -78,6 +79,47 @@ class RefreshToken(models.Model):
         return super().save(*args, **kwargs)
 
 
+class ResetToken(models.Model):
+    token = models.CharField(max_length=255, editable=False)
+    is_used = models.BooleanField(default=False)
+    created_at = models.DateTimeField()
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='reset_tokens')
+
+    @property
+    def is_expired(self):
+        return timezone.now() < (self.created_at + settings.PASS_RESET_TOKEN_EXPIRATION_DELTA)
+
+    @property
+    def is_active(self):
+        return self.is_expired and not self.is_used
+
+    def set_password(self, password):
+        self.is_used = True
+        self.user.set_password(password)
+
+    @staticmethod
+    def generate_token(user, created_at):
+        from users.jwt_authentication.utils import generate_hash
+        hash_key = f'{user.id} - {created_at.timestamp()}'
+        return generate_hash(hash_key)
+
+    def send_recovery_mail(self):
+        send_recovery_email(
+            self.user.first_name,
+            self.user.last_name,
+            self.token,
+            self.user.email
+        )
+
+    def save(self, *args, **kwargs):
+
+        if not self.created_at:
+            self.created_at = timezone.now()
+
+        if not self.token:
+            self.token = self.generate_token(self.user, self.created_at)
+
+        return super().save(*args, **kwargs)
 
 
 

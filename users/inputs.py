@@ -15,7 +15,6 @@ class SignUpInput(graphene.InputObjectType):
     first_name = graphene.String(name='firstName')
     last_name = graphene.String(name='lastName')
     password = graphene.String()
-    # avatar = graphene.Field()
 
 
 class UpdatePasswordInput(graphene.InputObjectType):
@@ -47,3 +46,17 @@ class PresignAWSImageUploadInput(graphene.InputObjectType):
     class Meta:
         name = 'PresignDataInput'
 
+
+class PasswordRecoveryInput(graphene.InputObjectType):
+    email = graphene.String(required=True)
+
+    class Meta:
+        name = 'RequestPasswordRecoveryInput'
+
+
+class UpdatePasswordInput(graphene.InputObjectType):
+    password = graphene.String(required=True)
+    reset_token = graphene.String(required=True, name='resetToken')
+
+    class Meta:
+        name = 'UpdatePasswordInput'

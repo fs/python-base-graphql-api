@@ -1,6 +1,7 @@
 import graphene
-from graphene_django import DjangoObjectType
+from graphene_django import DjangoObjectType, DjangoListField
 from django.contrib.auth import get_user_model
+from .models import UserActivity
 
 User = get_user_model()
 
@@ -14,7 +15,28 @@ class UserType(DjangoObjectType):
         model = User
         name = 'User'
         fields = ('id', 'email')
+        interfaces = (graphene.relay.Node, )
 
     def resolve_avatar(self, info):
         return self.avatar.url
+
+
+class UserActivityType(DjangoObjectType):
+    title = graphene.String()
+    created_at = graphene.String(name='createdAt')
+    # event = DjangoListField(graphene.String, source='activity')
+    body = graphene.String()
+
+    class Meta:
+        model = UserActivity
+        name = 'Activity'
+        fields = ('id', 'activity')
+        interfaces = (graphene.relay.Node, )
+
+    def resolve_title(self, info):
+        return UserActivity.ACTIVITY_CHOICES[self.event]
+
+    def resolve_body(self, info):
+        return 'TEST'
+
 

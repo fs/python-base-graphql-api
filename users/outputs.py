@@ -18,6 +18,14 @@ class SignOutOutput(graphene.ObjectType):
     message = graphene.String()
 
 
+class PasswordRecoveryOutput(graphene.ObjectType):
+    class Meta:
+        name = 'DetailedMessage'
+
+    message = graphene.String()
+    detail = graphene.String()
+
+
 class PresignField(graphene.ObjectType):
     key = graphene.String()
     value = graphene.String()
@@ -29,7 +37,3 @@ class PresignAWSImageUploadOutput(graphene.ObjectType):
 
     fields = graphene.List(PresignField)
     url = graphene.String()
-
-
-
-

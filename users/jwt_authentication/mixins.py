@@ -1,9 +1,8 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from .utils import jwt_encode
-from .models import RefreshToken
+from .models import RefreshToken, ResetToken
 from .exceptions import InvalidCredentials
-from django.forms.models import model_to_dict
 
 jwt_settings = settings.JWT_SETTINGS
 User = get_user_model()
@@ -77,8 +76,6 @@ class UpdateUserMixin:
             setattr(user, key, input[key])
 
         user.save()
-        user_fields = list(input.keys()) + ['id', 'avatar']
-        return model_to_dict(user, user_fields)
 
 
 class ImagePresignMixin:
@@ -88,7 +85,24 @@ class ImagePresignMixin:
         return user.avatar.storage.generate_presigned_post(filename, file_type)
 
 
+class PasswordRecoveryMixin:
+
+    @classmethod
+    def recovery(cls, email):
+        user = User.objects.filter(email=email)
+
+        if user.exists():
+            reset_token = ResetToken.objects.create(user=user[0])
+            reset_token.send_recovery_mail()
 
 
+class UpdatePasswordMixin:
 
+    @classmethod
+    def update_password(cls, password, reset_token):
+        reset_token = ResetToken.objects.get(token=reset_token)
+        if not reset_token.is_active:
+            raise Exception("Reset token already used")
 
+        reset_token.set_password(password)
+        return reset_token.user

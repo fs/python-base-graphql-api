@@ -68,27 +68,6 @@ def get_refresh_token_by_request(request):
     return request.COOKIES.get(jwt_settings.get('JWT_REFRESH_TOKEN_COOKIE_NAME'))
 
 
-def set_cookie(response, key, value, expires):
-    kwargs = {
-        'expires': expires,
-        'httponly': True,
-        'secure': False,
-        'path': '/',
-        'domain': None,
-        'samesite': None,
-    }
-
-    response.set_cookie(key, value, **kwargs)
-
-
-def delete_cookie(response, key):
-    response.delete_cookie(
-        key,
-        path='/',
-        domain=None,
-    )
-
-
 def generate_hash(val):
     m = hashlib.new('MD5')
     m.update(val.encode('utf-8'))

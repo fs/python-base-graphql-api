@@ -1,6 +1,7 @@
 from django.apps import apps
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser, UserManager
+from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from users.storages import S3DirectUploadStorage
@@ -67,7 +68,9 @@ class UserActivity(models.Model):
         (USER_REGISTERED, 'Пользователь зарегестрировался'),
         (USER_RESET_PASSWORD, 'Пользователь восстановил пароль'),
         (RESET_PASSWORD_REQUESTED, 'Пользователь запросил смену пароля'),
-        (USER_UPDATED, 'Пользователь обновлен')
+        (USER_UPDATED, 'Пользователь обновлен'),
     )
 
     activity = models.CharField(max_length=255, choices=ACTIVITY_CHOICES)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='activities')
+    created_at = models.DateTimeField(auto_now_add=True)
