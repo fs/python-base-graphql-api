@@ -1,5 +1,5 @@
 import graphene
-from users.types import UserType
+from users.graphql.types import UserType
 
 
 class AuthenticationOutput(graphene.ObjectType):

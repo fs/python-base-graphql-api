@@ -63,7 +63,7 @@ class UserActivity(models.Model):
     RESET_PASSWORD_REQUESTED = 'RESET_PASSWORD_REQUESTED'
     USER_UPDATED = 'USER_UPDATED'
 
-    ACTIVITY_CHOICES = (
+    EVENT_CHOICES = (
         (USER_LOGGED_IN, 'Пользователь вошел'),
         (USER_REGISTERED, 'Пользователь зарегестрировался'),
         (USER_RESET_PASSWORD, 'Пользователь восстановил пароль'),
@@ -71,6 +71,6 @@ class UserActivity(models.Model):
         (USER_UPDATED, 'Пользователь обновлен'),
     )
 
-    activity = models.CharField(max_length=255, choices=ACTIVITY_CHOICES)
+    event = models.CharField(max_length=255, choices=EVENT_CHOICES)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='activities')
     created_at = models.DateTimeField(auto_now_add=True)

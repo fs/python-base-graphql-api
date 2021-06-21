@@ -1,20 +1,20 @@
 import graphene
-import users.mutations
-import users.quyeries
+import users.graphql.mutations
+import users.graphql.quyeries
 
 from graphene_django.debug import DjangoDebug
 
 
 class Query(
     graphene.ObjectType,
-    users.quyeries.Query,
+    users.graphql.quyeries.Query,
 ):
     debug = graphene.Field(DjangoDebug, name='_debug')
 
 
 class Mutation(
     graphene.ObjectType,
-    users.mutations.Mutation
+    users.graphql.mutations.Mutation
 ):
     debug = graphene.Field(DjangoDebug, name='_debug')
 

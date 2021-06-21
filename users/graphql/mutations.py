@@ -1,12 +1,12 @@
 import graphene
 
 from django.contrib.auth import authenticate, get_user_model
-from users import inputs, outputs
+from users.graphql import outputs, inputs
 from users.jwt_authentication import mixins
 from users.jwt_authentication.decorators import login_required
-from .jwt_authentication.exceptions import InvalidCredentials
-from .models import UserActivity
-from .signals import user_activity_signal
+from users.jwt_authentication.exceptions import InvalidCredentials
+from users.models import UserActivity
+from users.signals import user_activity_signal
 
 User = get_user_model()
 
@@ -65,7 +65,7 @@ class SignOut(mixins.RevokeTokenMixin, graphene.Mutation):
         return cls.Output(message='Success')
 
 
-class UpdateUser(mixins.ImagePresignMixin, mixins.UpdateUserMixin, graphene.Mutation):
+class UpdateUser(mixins.UpdateUserMixin, graphene.Mutation):
     Output = outputs.UserType
 
     class Arguments:
