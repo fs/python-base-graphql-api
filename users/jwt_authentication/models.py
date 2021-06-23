@@ -1,11 +1,14 @@
 from calendar import timegm
+from datetime import datetime
+
 from django.db import models
 from django.contrib.auth import get_user_model
-from datetime import datetime
-from .utils import jwt_encode, jwt_decode, jwt_payload, generate_hash
-from utils.email import send_recovery_email
 from django.conf import settings
 from django.utils import timezone
+
+from .utils import jwt_encode, jwt_decode, jwt_payload, generate_hash
+from utils.email import send_recovery_email
+
 
 jwt_settings = settings.JWT_SETTINGS
 User = get_user_model()
@@ -16,7 +19,7 @@ class RefreshTokenQuerySet(models.QuerySet):
     def revoke_all_for_user(self, user):
         self.filter(user=user).update(revoked_at=datetime.now())
 
-    def get_active_tokens_for_user(self, sub):
+    def get_active_tokens_for_sub(self, sub):
         created_at = timezone.now() - jwt_settings.get('REFRESH_TOKEN_EXPIRATION_DELTA')
         return self.filter(created_at__gt=created_at, revoked_at=None, user__id=sub)
 

@@ -1,13 +1,16 @@
 import graphene
 from graphene_django.filter import DjangoFilterConnectionField
-from .types import UserType, UserActivityType
+
 from users.jwt_authentication.decorators import login_required
 from users.graphql.filters import UserActivityFilterSet
-from ..models import UserActivity
+from graphql_core.fields import FilterConnection
+
+from .types import UserType, UserActivityType
 
 
 class Query:
-    activities = DjangoFilterConnectionField(UserActivityType, filterset_class=UserActivityFilterSet)
+    # activities = DjangoFilterConnectionField(UserActivityType, filterset_class=UserActivityFilterSet)
+    activities = FilterConnection(UserActivityType, filterset_class=UserActivityFilterSet)
     # activity = graphene.relay.Node.Field(UserActivityType)
     me = graphene.Field(UserType)
 

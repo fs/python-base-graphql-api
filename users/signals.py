@@ -3,7 +3,7 @@ from .models import UserActivity
 
 
 def save_activity(user, activity, **kwargs):
-    UserActivity.objects.create(user=user, activity=activity)
+    UserActivity.objects.create(user=user, event=activity)
 
 
 user_activity_signal = Signal()

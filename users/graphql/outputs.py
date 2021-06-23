@@ -1,4 +1,5 @@
 import graphene
+
 from users.graphql.types import UserType
 
 
@@ -22,8 +23,8 @@ class PasswordRecoveryOutput(graphene.ObjectType):
     class Meta:
         name = 'DetailedMessage'
 
-    message = graphene.String()
-    detail = graphene.String()
+    message = graphene.String(default_value='Instructions sent')
+    detail = graphene.String(default_value='Password recovery instructions were sent if that account exists')
 
 
 class PresignField(graphene.ObjectType):

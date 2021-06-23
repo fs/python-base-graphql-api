@@ -1,3 +1,4 @@
+python-decouple
 flake8
 wemake-python-styleguide
 flake8-pytest-style

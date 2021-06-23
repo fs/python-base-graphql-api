@@ -1,6 +1,6 @@
 from functools import wraps
-from .exceptions import PermissionDenied
 from graphql.execution.execute import GraphQLResolveInfo
+from .exceptions import PermissionDenied
 
 
 def context(f):

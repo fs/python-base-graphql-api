@@ -1,6 +1,9 @@
 import graphene
-from graphene_django import DjangoObjectType
 from django.contrib.auth import get_user_model
+from graphene_django import DjangoObjectType
+from graphene_django_extras import DjangoListObjectType, PageGraphqlPagination
+
+
 from users.models import UserActivity
 
 User = get_user_model()

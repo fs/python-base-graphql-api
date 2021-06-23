@@ -1,8 +1,10 @@
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import AnonymousUser
+
 from .models import RefreshToken
-from .utils import (get_user_by_access_token, get_access_token_by_request, get_refresh_token_by_request)
+from .utils import get_refresh_token_by_request
+from .exceptions import InvalidCredentials
 
 jwt_settings = settings.JWT_SETTINGS
 
@@ -31,7 +33,7 @@ class TokenAuthenticationMiddleware:
 
         if user is not None and refresh_token_instance is not None:
             if refresh_token_instance.user != user:
-                raise Exception('Not valid refresh token')
+                raise InvalidCredentials('Refresh token is not valid')
 
             context.user = user
             context.refresh_token = refresh_token_instance

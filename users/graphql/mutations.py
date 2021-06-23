@@ -1,6 +1,6 @@
 import graphene
-
 from django.contrib.auth import authenticate, get_user_model
+
 from users.graphql import outputs, inputs
 from users.jwt_authentication import mixins
 from users.jwt_authentication.decorators import login_required
@@ -106,14 +106,11 @@ class RequestPasswordRecovery(mixins.PasswordRecoveryMixin, graphene.Mutation):
     def mutate(cls, _, info, input):
         email = input.get('email')
         cls.recovery(email)
-        message = 'Instructions sent'
-        detail = 'Password recovery instructions were sent if that account exists'
-
         user = User.objects.filter(email=email)
         if user.exists():
             user_activity_signal.send(cls, user=user[0], activity=UserActivity.RESET_PASSWORD_REQUESTED)
 
-        return cls.Output(message=message, detail=detail)
+        return cls.Output()
 
 
 class UpdatePassword(mixins.ObtainPairMixin, mixins.UpdatePasswordMixin, graphene.Mutation):

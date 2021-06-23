@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
-from .utils import get_access_token_by_request, get_user_by_access_token, jwt_decode
+
+from .utils import get_access_token_by_request, jwt_decode
 from .models import RefreshToken
 
 User = get_user_model()
@@ -17,7 +18,7 @@ class JSONWebTokenBackend:
             payload = jwt_decode(access_token)
 
             related_refresh_token = RefreshToken.objects\
-                .get_active_tokens_for_user(payload.get('sub'))\
+                .get_active_tokens_for_sub(payload.get('sub'))\
                 .filter(jti=payload.get('jti'))
 
             if related_refresh_token.exists():

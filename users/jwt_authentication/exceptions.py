@@ -20,4 +20,4 @@ class JSONWebTokenExpired(JSONWebTokenError):
 
 
 class InvalidCredentials(JSONWebTokenError):
-    default_message =  _('Invalid credentials')
+    default_message = _('Invalid credentials')

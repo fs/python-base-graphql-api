@@ -1,4 +1,5 @@
 import django_filters
+
 from users.models import UserActivity
 
 
@@ -12,3 +13,4 @@ class UserActivityFilterSet(django_filters.FilterSet):
 
     def filter_events(self, queryset, name, value):
         return queryset
+
