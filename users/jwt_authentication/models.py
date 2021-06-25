@@ -17,7 +17,7 @@ User = get_user_model()
 class RefreshTokenQuerySet(models.QuerySet):
 
     def revoke_all_for_user(self, user):
-        self.filter(user=user).update(revoked_at=datetime.now())
+        self.get_active_tokens_for_sub(user.id).update(revoked_at=datetime.now())
 
     def get_active_tokens_for_sub(self, sub):
         created_at = timezone.now() - jwt_settings.get('REFRESH_TOKEN_EXPIRATION_DELTA')
