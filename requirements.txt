@@ -4,8 +4,9 @@ wemake-python-styleguide
 flake8-pytest-style
 flake8-django
 flake8-logging-format
+psycopg2
 
-Django
+Django==3.2.4
 graphene==3.0b7
 graphene-django==3.0.0b7
 PyJWT==2.1.0

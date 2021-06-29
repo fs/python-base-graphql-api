@@ -100,7 +100,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -125,7 +125,6 @@ GRAPHENE = {
     'MIDDLEWARE': [
         'graphene_django.debug.DjangoDebugMiddleware',
         'users.jwt_authentication.middleware.TokenAuthenticationMiddleware',
-        # 'graphql_jwt.middleware.JSONWebTokenMiddleware',
     ],
 }
 

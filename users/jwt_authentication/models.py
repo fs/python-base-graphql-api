@@ -1,5 +1,4 @@
 from calendar import timegm
-from datetime import datetime
 
 from django.db import models
 from django.contrib.auth import get_user_model
@@ -17,11 +16,11 @@ User = get_user_model()
 class RefreshTokenQuerySet(models.QuerySet):
 
     def revoke_all_for_user(self, user):
-        self.get_active_tokens_for_sub(user.id).update(revoked_at=datetime.now())
+        self.get_active_tokens_for_sub(user.id).update(revoked_at=timezone.now())
 
-    def get_active_tokens_for_sub(self, sub):
+    def get_active_tokens_for_sub(self, sub, **kwargs):
         created_at = timezone.now() - jwt_settings.get('REFRESH_TOKEN_EXPIRATION_DELTA')
-        return self.filter(created_at__gt=created_at, revoked_at=None, user__id=sub)
+        return self.filter(created_at__gt=created_at, revoked_at=None, user__id=sub, **kwargs)
 
 
 class RefreshToken(models.Model):
@@ -46,7 +45,7 @@ class RefreshToken(models.Model):
 
     @property
     def is_expired(self):
-        return self.expires_at > datetime.now()
+        return self.expires_at > timezone.now()
 
     @property
     def is_revoked(self):
@@ -65,11 +64,10 @@ class RefreshToken(models.Model):
         return generate_hash(key)
 
     def revoke(self):
-        self.revoked_at = datetime.now()
+        self.revoked_at = timezone.now()
         self.save()
 
     def save(self, *args, **kwargs):
-
         self.created_at = timezone.now()
 
         if not self.jti:

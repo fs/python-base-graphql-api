@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from jwt.exceptions import DecodeError
 
 from .utils import get_access_token_by_request, jwt_decode
 from .models import RefreshToken
@@ -15,14 +16,17 @@ class JSONWebTokenBackend:
         access_token = get_access_token_by_request(request)
 
         if access_token is not None:
-            payload = jwt_decode(access_token)
 
-            related_refresh_token = RefreshToken.objects\
-                .get_active_tokens_for_sub(payload.get('sub'))\
-                .filter(jti=payload.get('jti'))
+            try:
+                payload = jwt_decode(access_token)
+            except DecodeError:
+                return None
 
-            if related_refresh_token.exists():
-                return related_refresh_token[0].user
+            related_active_refresh_token = RefreshToken.objects\
+                .get_active_tokens_for_sub(payload.get('sub'), jti=payload.get('jti'))
+
+            if related_active_refresh_token.exists():
+                return related_active_refresh_token[0].user
 
         return None
 

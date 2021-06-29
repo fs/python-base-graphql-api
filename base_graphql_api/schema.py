@@ -1,13 +1,13 @@
 import graphene
 import users.graphql.mutations
-import users.graphql.quyeries
+import users.graphql.resolvers
 
 from graphene_django.debug import DjangoDebug
 
 
 class Query(
     graphene.ObjectType,
-    users.graphql.quyeries.Query,
+    users.graphql.resolvers.Query,
 ):
     debug = graphene.Field(DjangoDebug, name='_debug')
 
