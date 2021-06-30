@@ -1,9 +1,8 @@
-import jwt
 import hashlib
 from calendar import timegm
 from datetime import datetime
-from django.utils import timezone
 
+import jwt
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
@@ -39,7 +38,6 @@ def jwt_encode(payload):
 
 
 def jwt_decode(token):
-
     return jwt.decode(
         token,
         jwt_settings.get('JWT_SECRET_KEY'),
@@ -73,4 +71,3 @@ def generate_hash(val):
     m = hashlib.new('MD5')
     m.update(val.encode('utf-8'))
     return m.hexdigest()
-

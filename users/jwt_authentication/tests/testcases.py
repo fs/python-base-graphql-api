@@ -1,11 +1,12 @@
 from unittest import mock
 
-from graphql.execution.execute import GraphQLResolveInfo
-from django.contrib.auth import get_user_model
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.test import TestCase, RequestFactory
+from graphql.execution.execute import GraphQLResolveInfo
 
 from ..mixins import ObtainPairMixin
+from ..models import RefreshToken
 
 jwt_settings = settings.JWT_SETTINGS
 User = get_user_model()
@@ -21,9 +22,10 @@ class UserAuthenticatedTestCase(ObtainPairMixin, TestCase):
         self.user = user
         self.access_token = tokens.get('access_token')
         self.refresh_token = tokens.get('refresh_token')
+        self.refresh_token_instance = RefreshToken.objects.get(token=self.refresh_token)
         self.request_factory = RequestFactory()
 
-    def info(self, user=None, headers=None, cookies={}):
+    def info(self, user=None, headers={}, cookies={}):
         request = self.request_factory.post('/', **headers)
         request.COOKIES = cookies
 

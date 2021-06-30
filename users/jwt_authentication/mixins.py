@@ -1,9 +1,9 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
-from .utils import jwt_encode
+from .exceptions import InvalidCredentials, JSONWebTokenExpired
 from .models import RefreshToken, ResetToken
-from .exceptions import InvalidCredentials
+from .utils import jwt_encode, get_refresh_token_by_request
 
 jwt_settings = settings.JWT_SETTINGS
 User = get_user_model()
@@ -28,7 +28,7 @@ class RevokeTokenMixin:
 
     @classmethod
     def logout(cls, request, everywhere=False):
-        if not hasattr(request, 'user') or not hasattr(request, 'refresh_token'):
+        if not hasattr(request, 'user'):
             return None
 
         if everywhere:
@@ -41,8 +41,17 @@ class UpdateTokenPairMixin(ObtainPairMixin):
 
     @classmethod
     def update_pair(cls, request):
-        request.refresh_token.revoke()
-        return cls.generate_pair(request.user)
+        refresh_token = get_refresh_token_by_request(request)
+        try:
+            refresh_token_instance = RefreshToken.objects.get(token=refresh_token)
+        except RefreshToken.DoesNotExist:
+            raise InvalidCredentials('Invalid refresh token')
+
+        if refresh_token_instance.is_active():
+            refresh_token_instance.revoke()
+            return cls.generate_pair(request.user)
+        else:
+            raise JSONWebTokenExpired()
 
 
 class UpdateUserMixin:

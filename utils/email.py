@@ -1,8 +1,8 @@
 from decouple import config
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
-from django.core.mail import send_mail as django_send_mail
 from django.conf import settings
+from django.core.mail import send_mail
+from django.core.mail import send_mail as django_send_mail
+from django.template.loader import render_to_string
 
 
 def send_recovery_email(first_name, last_name, reset_token, email_to):
@@ -37,7 +37,3 @@ def send_mail(subject, email_to, context, text_template, html_template):
         [email_to],
         html_message=html_content
     )
-
-
-
-

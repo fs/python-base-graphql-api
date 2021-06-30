@@ -1,13 +1,12 @@
 from calendar import timegm
 
-from django.db import models
-from django.contrib.auth import get_user_model
 from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.db import models
 from django.utils import timezone
 
-from .utils import jwt_encode, jwt_decode, jwt_payload, generate_hash
 from utils.email import send_recovery_email
-
+from .utils import jwt_encode, jwt_decode, jwt_payload, generate_hash
 
 jwt_settings = settings.JWT_SETTINGS
 User = get_user_model()
@@ -121,7 +120,3 @@ class ResetToken(models.Model):
             self.token = self.generate_token(self.user, self.created_at)
 
         return super().save(*args, **kwargs)
-
-
-
-

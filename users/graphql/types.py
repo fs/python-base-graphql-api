@@ -37,9 +37,6 @@ class UserActivityType(DjangoObjectType):
         interfaces = (graphene.relay.Node, )
         filter_fields = ['event']
 
-    # def resolve_event(self, info, **args):
-    #     return 'test'
-
     def resolve_title(self, _):
         return self.get_event_display()
 

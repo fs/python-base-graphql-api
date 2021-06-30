@@ -1,8 +1,9 @@
 from django.contrib.auth import get_user_model
 from jwt.exceptions import DecodeError
 
-from .utils import get_access_token_by_request, jwt_decode
+from .exceptions import JSONWebTokenExpired, InvalidCredentials
 from .models import RefreshToken
+from .utils import get_access_token_by_request, jwt_decode
 
 User = get_user_model()
 
@@ -20,13 +21,15 @@ class JSONWebTokenBackend:
             try:
                 payload = jwt_decode(access_token)
             except DecodeError:
-                return None
+                raise InvalidCredentials()
 
-            related_active_refresh_token = RefreshToken.objects\
+            related_active_refresh_token = RefreshToken.objects \
                 .get_active_tokens_for_sub(payload.get('sub'), jti=payload.get('jti'))
 
             if related_active_refresh_token.exists():
                 return related_active_refresh_token[0].user
+            else:
+                raise JSONWebTokenExpired()
 
         return None
 
