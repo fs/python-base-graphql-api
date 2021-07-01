@@ -26,7 +26,7 @@ class S3DirectUploadStorage(S3Boto3Storage):
 
     @staticmethod
     def get_filename_hash(filename):
-        from users.jwt_authentication.utils import generate_hash
+        from users.jwt_auth.utils import generate_hash
 
         hash_key = f'{filename} - {timezone.now().utctimetuple()}'
         return f'{generate_hash(hash_key)}'

@@ -2,9 +2,9 @@ import graphene
 from django.contrib.auth import authenticate, get_user_model
 
 from users.graphql import outputs, inputs
-from users.jwt_authentication import mixins
-from users.jwt_authentication.decorators import login_required
-from users.jwt_authentication.exceptions import InvalidCredentials
+from users.jwt_auth import mixins
+from users.jwt_auth.decorators import login_required
+from users.jwt_auth.exceptions import InvalidCredentials
 from users.models import UserActivity
 from users.signals import user_activity_signal
 
@@ -60,8 +60,12 @@ class SignOut(mixins.RevokeTokenMixin, graphene.Mutation):
 
     @classmethod
     def mutate(cls, _, info, input):
+        context = info.context
         everywhere = input.get('everywhere', False)
-        cls.logout(info.context, everywhere)
+
+        if context.user.is_authenticated:
+            cls.logout(info.context, everywhere)
+
         return cls.Output(message='Success')
 
 

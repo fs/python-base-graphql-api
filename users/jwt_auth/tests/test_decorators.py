@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 
-from users.jwt_authentication import decorators
+from users.jwt_auth import decorators
 from .testcases import UserAuthenticatedTestCase
 from ..exceptions import PermissionDenied
 

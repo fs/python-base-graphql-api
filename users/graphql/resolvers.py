@@ -3,7 +3,7 @@ import graphene
 from graphql_core.fields import FilterConnection
 
 from users.graphql.filters import UserActivityFilterSet
-from users.jwt_authentication.decorators import login_required
+from users.jwt_auth.decorators import login_required
 from .types import UserType, UserActivityType
 
 

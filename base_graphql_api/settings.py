@@ -21,7 +21,7 @@ INSTALLED_APPS = [
     # 'graphql_core',
     'graphene_django',
     'django_filters',
-    'users.jwt_authentication',
+    'users.jwt_auth',
     'users',
 
 ]
@@ -75,7 +75,7 @@ DATABASES = {
 AUTH_USER_MODEL = 'users.User'
 
 AUTHENTICATION_BACKENDS = [
-    'users.jwt_authentication.backends.JSONWebTokenBackend',
+    'users.jwt_auth.backends.JSONWebTokenBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
 
@@ -124,7 +124,7 @@ GRAPHENE = {
     'SCHEMA': 'base_graphql_api.schema.schema',
     'MIDDLEWARE': [
         'graphene_django.debug.DjangoDebugMiddleware',
-        'users.jwt_authentication.middleware.TokenAuthenticationMiddleware',
+        'users.jwt_auth.middleware.TokenAuthenticationMiddleware',
     ],
 }
 
@@ -139,8 +139,6 @@ JWT_SETTINGS = {
     'JWT_VERIFY_EXPIRATION': False,
     'JWT_AUDIENCE': None,
     'JWT_VERIFY': True,
-    'JWT_ISSUER': None,
-    'JWT_LEEWAY': 0,
 }
 
 AWS_ACCESS_KEY_ID = config('S3_ACCESS_KEY_ID')

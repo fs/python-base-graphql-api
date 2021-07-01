@@ -2,7 +2,7 @@ from django.conf import settings
 
 from .testcases import UserAuthenticatedTestCase
 from ..backends import JSONWebTokenBackend
-from ..exceptions import InvalidCredentials, JSONWebTokenExpired
+from ..exceptions import PermissionDenied
 
 jwt_settings = settings.JWT_SETTINGS
 
@@ -31,13 +31,13 @@ class BackendTest(UserAuthenticatedTestCase):
         info = self.get_authenticated_info_context()
         self.user.refresh_tokens.revoke_all_for_user(self.user)
 
-        with self.assertRaises(JSONWebTokenExpired):
-            self.backend.authenticate(info.context)
+        user = self.backend.authenticate(info.context)
+        self.assertIsNone(user)
 
     def test_authenticate_invalid(self):
         request = self.get_authenticated_info_context(access_token='INVALID_ACCESS_TOKEN').context
 
-        with self.assertRaises(InvalidCredentials):
+        with self.assertRaises(PermissionDenied):
             self.backend.authenticate(request)
 
     def test_authenticate_null_request(self):

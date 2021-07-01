@@ -18,8 +18,14 @@ class RefreshTokenQuerySet(models.QuerySet):
         self.get_active_tokens_for_sub(user.id).update(revoked_at=timezone.now())
 
     def get_active_tokens_for_sub(self, sub, **kwargs):
+        return self.filter_active_tokens(user__id=sub, **kwargs)
+
+    def filter_active_tokens(self, **kwargs):
         created_at = timezone.now() - jwt_settings.get('REFRESH_TOKEN_EXPIRATION_DELTA')
-        return self.filter(created_at__gt=created_at, revoked_at=None, user__id=sub, **kwargs)
+        return self.filter(created_at__gt=created_at, revoked_at__isnull=True, **kwargs)
+
+    def access_token_is_active(self, jti, **kwargs):
+        return self.filter_active_tokens(jti=jti, **kwargs).exists()
 
 
 class RefreshToken(models.Model):
@@ -99,7 +105,7 @@ class ResetToken(models.Model):
 
     @staticmethod
     def generate_token(user, created_at):
-        from users.jwt_authentication.utils import generate_hash
+        from users.jwt_auth.utils import generate_hash
         hash_key = f'{user.id} - {created_at.timestamp()}'
         return generate_hash(hash_key)
 

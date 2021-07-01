@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('jwt_authentication', '0002_auto_20210610_1844'),
+        ('jwt_auth', '0002_auto_20210610_1844'),
     ]
 
     operations = [

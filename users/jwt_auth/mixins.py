@@ -41,17 +41,8 @@ class UpdateTokenPairMixin(ObtainPairMixin):
 
     @classmethod
     def update_pair(cls, request):
-        refresh_token = get_refresh_token_by_request(request)
-        try:
-            refresh_token_instance = RefreshToken.objects.get(token=refresh_token)
-        except RefreshToken.DoesNotExist:
-            raise InvalidCredentials('Invalid refresh token')
-
-        if refresh_token_instance.is_active():
-            refresh_token_instance.revoke()
-            return cls.generate_pair(request.user)
-        else:
-            raise JSONWebTokenExpired()
+        request.refresh_token.revoke()
+        return cls.generate_pair(request.user)
 
 
 class UpdateUserMixin:

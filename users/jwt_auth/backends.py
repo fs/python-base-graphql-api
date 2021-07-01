@@ -1,8 +1,9 @@
 from django.contrib.auth import get_user_model
+from django.utils.functional import SimpleLazyObject
 from jwt.exceptions import DecodeError
 
-from .exceptions import JSONWebTokenExpired, InvalidCredentials
 from .models import RefreshToken
+from .exceptions import PermissionDenied
 from .utils import get_access_token_by_request, jwt_decode
 
 User = get_user_model()
@@ -20,18 +21,18 @@ class JSONWebTokenBackend:
 
             try:
                 payload = jwt_decode(access_token)
+
             except DecodeError:
-                raise InvalidCredentials()
+                raise PermissionDenied()
 
-            related_active_refresh_token = RefreshToken.objects \
-                .get_active_tokens_for_sub(payload.get('sub'), jti=payload.get('jti'))
+            try:
+                user = User.objects.get(pk=payload.get('sub'))
+                access_token_is_active = user.refresh_tokens.access_token_is_active(jti=payload['jti'])
 
-            if related_active_refresh_token.exists():
-                return related_active_refresh_token[0].user
-            else:
-                raise JSONWebTokenExpired()
+                return user if access_token_is_active else None
 
-        return None
+            except User.DoesNotExist:
+                return None
 
     def get_user(self, user_id):
         return None
