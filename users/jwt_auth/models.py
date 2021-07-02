@@ -91,6 +91,9 @@ class ResetToken(models.Model):
     created_at = models.DateTimeField()
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='reset_tokens')
 
+    def __str__(self):
+        return self.token
+
     @property
     def is_expired(self):
         return timezone.now() < (self.created_at + settings.PASS_RESET_TOKEN_EXPIRATION_DELTA)
