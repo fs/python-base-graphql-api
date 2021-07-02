@@ -62,7 +62,7 @@ class StaffMemberRequiredTest(DecoratorTestMixin, UserAuthenticatedTestCase):
         self.user_with_perms.save()
 
 
-class SuperUserMemberRequiredTest(DecoratorTestMixin, UserAuthenticatedTestCase):
+class SuperuserRequiredTest(DecoratorTestMixin, UserAuthenticatedTestCase):
     def setUp(self):
         super().setUp()
 

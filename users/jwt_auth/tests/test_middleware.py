@@ -37,6 +37,7 @@ class JWTMiddlewareTest(UserAuthenticatedTestCase):
 
             self.assertEqual(context.user, AnonymousUser())
 
+        # assertIsNone don`t work with SimpleLazyObject
         self.assertEqual(context.refresh_token, None)
 
         next_middleware.assert_called_once_with(None, info)
@@ -51,6 +52,5 @@ class JWTMiddlewareTest(UserAuthenticatedTestCase):
 
         self.assertEqual(context.user, AnonymousUser())
         self.assertEqual(context.refresh_token, None)
-        # assertNone don`t work with SimpleLazyObject
 
         next_middleware.assert_called_once_with(None, info)

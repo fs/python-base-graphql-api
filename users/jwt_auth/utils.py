@@ -50,7 +50,10 @@ def get_access_token_by_request(request):
 
 def get_access_payload_by_request(request):
     access_token = get_access_token_by_request(request)
-    return jwt_decode(access_token) if access_token else None
+    try:
+        return jwt_decode(access_token)
+    except jwt.exceptions.DecodeError:
+        return None
 
 
 def get_refresh_token_by_request(request):

@@ -64,11 +64,11 @@ class UserActivity(models.Model):
     USER_UPDATED = 'USER_UPDATED'
 
     EVENT_CHOICES = (
-        (USER_LOGGED_IN, 'Пользователь вошел'),
-        (USER_REGISTERED, 'Пользователь зарегестрировался'),
-        (USER_RESET_PASSWORD, 'Пользователь восстановил пароль'),
-        (RESET_PASSWORD_REQUESTED, 'Пользователь запросил смену пароля'),
-        (USER_UPDATED, 'Пользователь обновлен'),
+        (USER_LOGGED_IN, 'User logged id'),
+        (USER_REGISTERED, 'User registered'),
+        (USER_RESET_PASSWORD, 'User reset password'),
+        (RESET_PASSWORD_REQUESTED, 'Reset password requested'),
+        (USER_UPDATED, 'User updated'),
     )
 
     event = models.CharField(max_length=255, choices=EVENT_CHOICES)

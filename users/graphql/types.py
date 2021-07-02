@@ -2,6 +2,7 @@ import graphene
 from django.contrib.auth import get_user_model
 from graphene_django import DjangoObjectType
 from graphene_django_extras import DjangoListObjectType, PageGraphqlPagination
+from ..jwt_auth.decorators import login_required
 
 
 from users.models import UserActivity
@@ -35,12 +36,16 @@ class UserActivityType(DjangoObjectType):
         name = 'Activity'
         fields = ('id', 'event')
         interfaces = (graphene.relay.Node, )
-        filter_fields = ['event']
 
     def resolve_title(self, _):
         return self.get_event_display()
 
     def resolve_body(self, info):
         return 'TEST'
+
+    @classmethod
+    @login_required
+    def get_queryset(cls, queryset, info):
+        return queryset
 
 

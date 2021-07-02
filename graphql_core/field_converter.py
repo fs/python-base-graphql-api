@@ -10,5 +10,3 @@ def convert_form_field_to_string_list(field):
     return graphene.List(
         enum, required=field.required
     )
-
-

@@ -2,7 +2,6 @@ from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import AnonymousUser
 from django.utils.functional import SimpleLazyObject
-from jwt.exceptions import DecodeError
 
 from .models import RefreshToken
 from .utils import get_access_payload_by_request, get_access_token_by_request
@@ -19,13 +18,7 @@ def get_user(context):
 
 def get_refresh_token(context):
     if not hasattr(context, '_cached_refresh_token'):
-
-        try:
-            access_payload = get_access_payload_by_request(context)
-
-        except DecodeError:
-            access_payload = None
-
+        access_payload = get_access_payload_by_request(context)
         context._cached_refresh_token = None
 
         if access_payload:

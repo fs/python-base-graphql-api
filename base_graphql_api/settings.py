@@ -18,7 +18,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'graphql_core',
+    'graphql_core',
     'graphene_django',
     'django_filters',
     'users.jwt_auth',
