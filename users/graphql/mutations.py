@@ -109,10 +109,9 @@ class RequestPasswordRecovery(mixins.PasswordRecoveryMixin, graphene.Mutation):
     @classmethod
     def mutate(cls, _, info, input):
         email = input.get('email')
-        cls.recovery(email)
-        user = User.objects.filter(email=email)
-        if user.exists():
-            user_activity_signal.send(cls, user=user[0], activity=UserActivity.RESET_PASSWORD_REQUESTED)
+        user = cls.recovery(email)
+        if user is not None:
+            user_activity_signal.send(cls, user=user, activity=UserActivity.RESET_PASSWORD_REQUESTED)
 
         return cls.Output()
 

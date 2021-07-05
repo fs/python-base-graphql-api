@@ -95,6 +95,8 @@ class PasswordRecoveryMixin:
         if user.exists():
             reset_token = ResetToken.objects.create(user=user[0])
             reset_token.send_recovery_mail()
+            return user[0]
+        return None
 
 
 class UpdatePasswordMixin:

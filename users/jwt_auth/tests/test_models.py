@@ -1,3 +1,6 @@
+import time
+from datetime import timedelta
+
 from django.conf import settings
 from django.utils import timezone
 
@@ -67,3 +70,27 @@ class ResetTokenTest(UserAuthenticatedTestCase):
     def setUp(self):
         super().setUp()
         self.model = ResetToken
+        self.instance = ResetToken.objects.create(user=self.user)
+
+    def test_str(self):
+        self.assertEqual(str(self.instance), self.instance.token)
+
+    def test_save(self):
+        reset_token = self.model.objects.create(user=self.user)
+        self.assertIsNotNone(reset_token.token)
+        self.assertIsNotNone(reset_token.created_at)
+
+    def test_set_password(self):
+        test_password = 'test_password_123'
+        reset_token = self.model.objects.create(user=self.user)
+        reset_token.set_password(test_password)
+
+        self.assertTrue(self.user.check_password(test_password))
+        self.assertTrue(reset_token.is_used)
+        self.assertFalse(reset_token.is_active)
+
+    def test_is_expired(self):
+        settings.PASS_RESET_TOKEN_EXPIRATION_DELTA = timedelta(seconds=1)
+        reset_token = self.model.objects.create(user=self.user)
+        time.sleep(1)
+        self.assertTrue(reset_token.is_expired)

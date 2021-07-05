@@ -96,7 +96,7 @@ class ResetToken(models.Model):
 
     @property
     def is_expired(self):
-        return timezone.now() < (self.created_at + settings.PASS_RESET_TOKEN_EXPIRATION_DELTA)
+        return timezone.now() > (self.created_at + settings.PASS_RESET_TOKEN_EXPIRATION_DELTA)
 
     @property
     def is_active(self):
