@@ -20,6 +20,11 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
+Make database migrations:
+```shell
+python manage.py migrate
+```
+
 Create superuser for admin panel access:
 ```shell
 python manage.py createsuperuser
