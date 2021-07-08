@@ -22,6 +22,6 @@ RUN apt-get update \
 
 COPY requirements.txt /project/requirements.txt
 RUN  pip install -r   /project/requirements.txt
-#COPY . /project
-WORKDIR /project
-#RUN make ci
+COPY .env /app/.env
+WORKDIR /app
+

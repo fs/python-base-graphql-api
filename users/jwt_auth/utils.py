@@ -64,3 +64,10 @@ def generate_hash(val):
     m = hashlib.new('MD5')
     m.update(val.encode('utf-8'))
     return m.hexdigest()
+
+
+def get_user_or_none(**kwargs):
+    try:
+        return User.objects.get(**kwargs)
+    except User.DoesNotExist:
+        return None

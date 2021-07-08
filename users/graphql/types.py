@@ -1,16 +1,15 @@
 import graphene
 from django.contrib.auth import get_user_model
 from graphene_django import DjangoObjectType
-from graphene_django_extras import DjangoListObjectType, PageGraphqlPagination
-from ..jwt_auth.decorators import login_required
-
-
+from users.jwt_auth.decorators import login_required
 from users.models import UserActivity
 
 User = get_user_model()
 
 
 class UserType(DjangoObjectType):
+    """GraphQL type based on user model."""
+
     avatar = graphene.String(name='avatarUrl')
     last_name = graphene.String(name='lastName')
     first_name = graphene.String(name='firstName')
@@ -21,11 +20,14 @@ class UserType(DjangoObjectType):
         fields = ('id', 'email')
         interfaces = (graphene.relay.Node, )
 
-    def resolve_avatar(self, info):
+    def resolve_avatar(self, _):
+        """User avatar url resolving."""
         return self.avatar.url
 
 
 class UserActivityType(DjangoObjectType):
+    """GraphQL type based on UserActivity model."""
+
     title = graphene.String()
     created_at = graphene.String(name='createdAt')
     body = graphene.String()
@@ -38,14 +40,18 @@ class UserActivityType(DjangoObjectType):
         interfaces = (graphene.relay.Node, )
 
     def resolve_title(self, _):
+        """Resolve event choices display name."""
         return self.get_event_display()
 
+    # TODO: make body
     def resolve_body(self, info):
+        """Resolve event description."""
         return 'TEST'
 
     @classmethod
     @login_required
     def get_queryset(cls, queryset, info):
+        """Method for wrap user activity data in login_required decorator."""
         return queryset
 
 

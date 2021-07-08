@@ -1,9 +1,9 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
-from .exceptions import InvalidCredentials, JSONWebTokenExpired
+from .exceptions import InvalidCredentials
 from .models import RefreshToken, ResetToken
-from .utils import jwt_encode, get_refresh_token_by_request
+from .utils import jwt_encode
 
 jwt_settings = settings.JWT_SETTINGS
 User = get_user_model()

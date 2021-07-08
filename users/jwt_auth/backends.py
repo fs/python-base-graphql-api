@@ -1,38 +1,35 @@
-from django.contrib.auth import get_user_model
-from django.utils.functional import SimpleLazyObject
 from jwt.exceptions import DecodeError
-
-from .models import RefreshToken
-from .exceptions import PermissionDenied
-from .utils import get_access_token_by_request, jwt_decode
-
-User = get_user_model()
+from users.jwt_auth import utils
+from users.jwt_auth.exceptions import PermissionDenied
 
 
 class JSONWebTokenBackend:
+    """JWT backend for authenticate user by access_token."""
 
     def authenticate(self, request=None, **kwargs):
+        """Access token authentication logic."""
         if request is None:
             return None
 
-        access_token = get_access_token_by_request(request)
+        access_token = utils.get_access_token_by_request(request)
 
-        if access_token is not None:
+        if access_token is None:
+            return None
 
-            try:
-                payload = jwt_decode(access_token)
+        try:
+            payload = utils.jwt_decode(access_token)
 
-            except DecodeError:
-                raise PermissionDenied()
+        except DecodeError:
+            raise PermissionDenied()
 
-            try:
-                user = User.objects.get(pk=payload.get('sub'))
-                access_token_is_active = user.refresh_tokens.access_token_is_active(jti=payload['jti'])
+        user = utils.get_user_or_none(pk=payload.get('sub'))
 
-                return user if access_token_is_active else None
+        if not user:
+            return None
 
-            except User.DoesNotExist:
-                return None
+        access_token_is_active = user.refresh_tokens.access_token_is_active(jti=payload['jti'])
+        return user if access_token_is_active else None
 
     def get_user(self, user_id):
-        return None
+        """Used by django authentication system. We don`t need this method implementation."""
+        return None  # noqa: WPS324

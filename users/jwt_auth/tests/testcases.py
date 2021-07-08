@@ -1,20 +1,22 @@
 from unittest import mock
+from abc import ABC
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.test import TestCase, RequestFactory
+from django.test import RequestFactory, TestCase
 from graphql.execution.execute import GraphQLResolveInfo
-
-from ..mixins import ObtainPairMixin
-from ..models import RefreshToken
+from users.jwt_auth.mixins import ObtainPairMixin
+from users.jwt_auth.models import RefreshToken
 
 jwt_settings = settings.JWT_SETTINGS
 User = get_user_model()
 
 
-class UserAuthenticatedTestCase(ObtainPairMixin, TestCase):
+class UserAuthenticatedTestCase(ABC, ObtainPairMixin, TestCase):
+    """Abstract TestCase with credentials for authenticate."""
 
     def setUp(self):
+        """Setup credentials."""
         user = User.objects.create(email='test@test.test')
         user.set_password('test')
         tokens = self.generate_pair(user)
@@ -25,9 +27,10 @@ class UserAuthenticatedTestCase(ObtainPairMixin, TestCase):
         self.refresh_token_instance = RefreshToken.objects.get(token=self.refresh_token)
         self.request_factory = RequestFactory()
 
-    def info(self, user=None, headers={}, cookies={}):
-        request = self.request_factory.post('/', **headers)
-        request.COOKIES = cookies
+    def info(self, user=None, headers=None, cookies=None):
+        """Make graphene info mock with specified params."""
+        request = self.request_factory.post('/', **(headers or {}))
+        request.COOKIES = cookies or {}
 
         if user:
             request.user = user
@@ -39,16 +42,17 @@ class UserAuthenticatedTestCase(ObtainPairMixin, TestCase):
         )
 
     def get_authenticated_info_context(self, access_token=None, refresh_token=None):
+        """Make graphene info with authenticated context."""
         access_token_header = jwt_settings.get('JWT_AUTH_HEADER_NAME')
-        access_token_prefix = jwt_settings.get('JWT_AUTH_HEADER_PREFIX')
         refresh_token_cookie_name = jwt_settings.get('JWT_REFRESH_TOKEN_COOKIE_NAME')
 
         headers = {
-            access_token_header: f'{access_token_prefix} {access_token or self.access_token}',
+            access_token_header: '{prefix} {token}'.format(
+                prefix=jwt_settings.get('JWT_AUTH_HEADER_PREFIX'),
+                token=access_token or self.access_token,
+            ),
         }
 
-        cookies = {
-            refresh_token_cookie_name: refresh_token or self.refresh_token
-        }
+        cookies = {refresh_token_cookie_name: refresh_token or self.refresh_token}
 
         return self.info(user=None, headers=headers, cookies=cookies)

@@ -2,9 +2,12 @@ from django.utils.translation import gettext_lazy as _
 
 
 class JSONWebTokenError(Exception):
+    """Raises in JWT authentication module."""
+
     default_message = None
 
     def __init__(self, message=None):
+        """Added default message for errors."""
         if message is None:
             message = self.default_message
 
@@ -12,12 +15,12 @@ class JSONWebTokenError(Exception):
 
 
 class PermissionDenied(JSONWebTokenError):
+    """Raises with expired tokens."""
+
     default_message = _('You do not have permission to perform this action')
 
 
-class JSONWebTokenExpired(JSONWebTokenError):
-    default_message = _('Signature has expired')
-
-
 class InvalidCredentials(JSONWebTokenError):
+    """Raises for invalid username:password."""
+
     default_message = _('Invalid credentials')
