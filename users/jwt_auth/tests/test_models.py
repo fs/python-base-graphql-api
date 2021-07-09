@@ -3,9 +3,8 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.utils import timezone
-
-from .testcases import UserAuthenticatedTestCase
-from ..models import RefreshToken, ResetToken
+from users.jwt_auth.models import RefreshToken, ResetToken
+from users.jwt_auth.tests.testcases import UserAuthenticatedTestCase
 
 jwt_settings = settings.JWT_SETTINGS
 
@@ -21,15 +20,6 @@ class RefreshTokenTest(UserAuthenticatedTestCase):
     def test_str(self):
         """Test str() of model instance. That must be equal token in string."""
         self.assertEqual(str(self.refresh_token_instance), self.refresh_token)
-
-    def test_is_revoked(self):
-        """Test is_revoked property of instance."""
-        refresh_token = self.refresh_token_instance
-        refresh_token.revoked_at = timezone.now()
-        refresh_token.save()
-
-        self.assertTrue(refresh_token.is_revoked)
-        self.assertFalse(refresh_token.is_active)
 
     def test_is_expired(self):
         """Test is_expired property of instance."""
@@ -54,6 +44,8 @@ class RefreshTokenTest(UserAuthenticatedTestCase):
         self.assertIsNone(refresh_token.revoked_at)
         refresh_token.revoke()
         self.assertIsNotNone(refresh_token.revoked_at)
+        self.assertTrue(refresh_token.is_revoked)
+        self.assertFalse(refresh_token.is_active)
 
     def test_expires_at(self):
         """Test expires_at property of instance."""

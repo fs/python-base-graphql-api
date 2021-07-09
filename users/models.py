@@ -4,24 +4,12 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from users.exceptions import UserAlreadyJoined
 from users.storages import S3DirectUploadStorage
 
 
 class UserQuerySet(UserManager):
     """Custom queryset for User model."""
-
-    def _create_user(self, email, password, **extra_fields):
-        """Override for email as username support. Saved normalizing for login field."""
-        if not email:
-            raise ValueError('The given email must be set')
-
-        email = self.normalize_email(email)
-        GlobalUserModel = apps.get_model(self.model._meta.app_label, self.model._meta.object_name)
-        email = GlobalUserModel.normalize_username(email)
-        user = self.model(email=email, **extra_fields)
-        user.password = make_password(password)
-        user.save(using=self._db)
-        return user
 
     def create_user(self, email, **extra_fields):
         """Changed from username to email."""
@@ -29,7 +17,7 @@ class UserQuerySet(UserManager):
         extra_fields.setdefault('is_superuser', False)
 
         if User.objects.filter(email=email).exists():
-            raise Exception('Already joined')
+            raise UserAlreadyJoined()
 
         return self._create_user(email, **extra_fields)
 
@@ -44,6 +32,19 @@ class UserQuerySet(UserManager):
             raise ValueError('Superuser must have is_superuser=True.')
 
         return self._create_user(email, password, **extra_fields)
+
+    def _create_user(self, email, password, **extra_fields):
+        """Override for email as username support. Saved normalizing for login field."""
+        if not email:
+            raise ValueError('The given email must be set')
+
+        email = self.normalize_email(email)
+        GlobalUserModel = apps.get_model(self.model._meta.app_label, self.model._meta.object_name)  # noqa: N806, WPS437
+        email = GlobalUserModel.normalize_username(email)
+        user = self.model(email=email, **extra_fields)
+        user.password = make_password(password)
+        user.save(using=self._db)
+        return user
 
 
 class User(AbstractUser):

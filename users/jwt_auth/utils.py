@@ -10,15 +10,17 @@ jwt_settings = settings.JWT_SETTINGS
 
 
 def jwt_payload(user, expires, jti, token_type):
+    """Make dict with JWT params."""
     return {
-        "sub": user.id,
-        "exp": timegm(expires.utctimetuple()),
-        "jti": jti,
-        "type": token_type,
+        'sub': user.id,
+        'exp': timegm(expires.utctimetuple()),
+        'jti': jti,
+        'type': token_type,
     }
 
 
 def jwt_encode(payload):
+    """Encode payload to JWT token."""
     return jwt.encode(
         payload,
         jwt_settings.get('JWT_SECRET_KEY'),
@@ -27,6 +29,7 @@ def jwt_encode(payload):
 
 
 def jwt_decode(token):
+    """Decode token to payload."""
     return jwt.decode(
         token,
         jwt_settings.get('JWT_SECRET_KEY'),
@@ -39,6 +42,7 @@ def jwt_decode(token):
 
 
 def get_access_token_by_request(request):
+    """Get access token from request headers."""
     auth = request.META.get(jwt_settings.get('JWT_AUTH_HEADER_NAME'), '').split()
     prefix = jwt_settings.get('JWT_AUTH_HEADER_PREFIX')
 
@@ -49,6 +53,7 @@ def get_access_token_by_request(request):
 
 
 def get_access_payload_by_request(request):
+    """Get token payload from request."""
     access_token = get_access_token_by_request(request)
     try:
         return jwt_decode(access_token)
@@ -57,17 +62,12 @@ def get_access_payload_by_request(request):
 
 
 def get_refresh_token_by_request(request):
+    """Get refresh token from request cookies."""
     return request.COOKIES.get(jwt_settings.get('JWT_REFRESH_TOKEN_COOKIE_NAME'))
 
 
-def generate_hash(val):
-    m = hashlib.new('MD5')
-    m.update(val.encode('utf-8'))
-    return m.hexdigest()
-
-
-def get_user_or_none(**kwargs):
-    try:
-        return User.objects.get(**kwargs)
-    except User.DoesNotExist:
-        return None
+def generate_hash(string):
+    """Generate unique hash by string."""
+    get_hash = hashlib.sha256()
+    get_hash.update(string.encode('utf-8'))
+    return get_hash.hexdigest()

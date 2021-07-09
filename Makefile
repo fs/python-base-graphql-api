@@ -4,7 +4,7 @@ make-env:
 	env > .env
 
 run:
-	sudo docker-compose up -d
+	sudo docker-compose build
 
 lint:
 	sudo docker exec python-base-graphql-api_web_1 flake8 users

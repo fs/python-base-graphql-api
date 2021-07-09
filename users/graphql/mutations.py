@@ -38,7 +38,8 @@ class SignUp(mixins.ObtainPairMixin, graphene.Mutation):
         input_ = inputs.SignUpInput(required=True, name='input')
 
     @classmethod
-    def mutate(cls, _, __, input_):
+    @graphene.resolve_only_args
+    def mutate(cls, _, input_):
         user = User.objects.create_user(**input_)
         tokens = cls.generate_pair(user)
         user_activity_signal.send(cls, user=user, activity=UserActivity.USER_REGISTERED)

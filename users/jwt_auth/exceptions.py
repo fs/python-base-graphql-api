@@ -24,3 +24,14 @@ class InvalidCredentials(JSONWebTokenError):
     """Raises for invalid username:password."""
 
     default_message = _('Invalid credentials')
+
+
+class ResetTokenExpired(Exception):
+    """Raise in password recovery by reset token."""
+
+    def __init__(self, message=None):
+        """Added default message."""
+        if message is None:
+            message = _('Reset token expired')
+
+        super().__init__(message)
