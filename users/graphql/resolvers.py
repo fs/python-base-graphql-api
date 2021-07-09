@@ -16,4 +16,4 @@ class Query(object):
     @login_required
     def resolve_me(cls, _, info):
         """Authenticated user resolver."""
-        return info.find_context.user
+        return info.context.user

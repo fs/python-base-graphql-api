@@ -26,7 +26,7 @@ class BackendTest(UserAuthenticatedTestCase):
     def test_authenticate(self):
         """Test authenticate with true credentials."""
         headers = self.get_auth_headers(self.access_token)
-        request = self.info(headers=headers).find_context
+        request = self.info(headers=headers).context
         user = self.backend.authenticate(request)
         self.assertEqual(user, self.user)
 
@@ -34,12 +34,12 @@ class BackendTest(UserAuthenticatedTestCase):
         """Test authenticate when all refresh tokens are revoked."""
         info = self.get_authenticated_info_context()
         self.user.refresh_tokens.revoke_all_for_user(self.user)
-        user = self.backend.authenticate(info.find_context)
+        user = self.backend.authenticate(info.context)
         self.assertIsNone(user)
 
     def test_authenticate_invalid(self):
         """Test invalid access token authentication."""
-        request = self.get_authenticated_info_context(access_token='INVALID_ACCESS_TOKEN').find_context
+        request = self.get_authenticated_info_context(access_token='INVALID_ACCESS_TOKEN').context
         with self.assertRaises(PermissionDenied):
             self.backend.authenticate(request)
 

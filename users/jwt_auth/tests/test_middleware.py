@@ -17,7 +17,7 @@ class JWTMiddlewareTest(UserAuthenticatedTestCase):
     def test_authenticate_request(self):
         """Test authenticated context."""
         info = self.get_authenticated_info_context()
-        context = info.find_context
+        context = info.context
         next_middleware = mock.Mock()
 
         self.middleware.resolve(next_middleware, None, info)
@@ -32,7 +32,7 @@ class JWTMiddlewareTest(UserAuthenticatedTestCase):
             access_token='INVALID_ACCESS_TOKEN',
             refresh_token='INVALID_REFRESH_TOKEN',
         )
-        context = info.find_context
+        context = info.context
         next_middleware = mock.Mock()
         self.middleware.resolve(next_middleware, None, info)
 
@@ -47,7 +47,7 @@ class JWTMiddlewareTest(UserAuthenticatedTestCase):
     def test_revoked_token(self):
         """Test context with valid tokens, but revoked refresh token."""
         info = self.get_authenticated_info_context()
-        context = info.find_context
+        context = info.context
 
         next_middleware = mock.Mock()
         self.refresh_token_instance.revoke()

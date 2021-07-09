@@ -37,7 +37,7 @@ class TokenAuthenticationMiddleware:
 
     def resolve(self, next, root, info, **kwargs):  # noqa: WPS125
         """Middleware resolver."""
-        context = info.find_context
+        context = info.context
         access_token = utils.get_access_token_by_request(context)
 
         if access_token:

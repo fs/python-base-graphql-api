@@ -16,11 +16,11 @@ class SignIn(mixins.ObtainPairMixin, graphene.Mutation):
     Output = outputs.AuthenticationOutput
 
     class Arguments:
-        input = inputs.SignInInput(required=True)
+        input_ = inputs.SignInInput(required=True, name='input')
 
     @classmethod
     def mutate(cls, _, info, input_):
-        user = authenticate(info.find_context, **input_)
+        user = authenticate(info.context, **input_)
         if not user:
             raise InvalidCredentials()
 
@@ -35,7 +35,7 @@ class SignUp(mixins.ObtainPairMixin, graphene.Mutation):
     Output = outputs.AuthenticationOutput
 
     class Arguments:
-        input = inputs.SignUpInput(required=True)
+        input_ = inputs.SignUpInput(required=True, name='input')
 
     @classmethod
     def mutate(cls, _, __, input_):
@@ -53,8 +53,8 @@ class UpdateTokenPair(mixins.UpdateTokenPairMixin, graphene.Mutation):
     @classmethod
     @login_required
     def mutate(cls, _, info):
-        tokens = cls.update_pair(info.find_context)
-        return cls.Output(me=info.find_context.user, **tokens)
+        tokens = cls.update_pair(info.context)
+        return cls.Output(me=info.context.user, **tokens)
 
 
 class SignOut(mixins.RevokeTokenMixin, graphene.Mutation):
@@ -63,15 +63,15 @@ class SignOut(mixins.RevokeTokenMixin, graphene.Mutation):
     Output = outputs.SignOutOutput
 
     class Arguments:
-        input = inputs.SignOutInput(required=True)
+        input_ = inputs.SignOutInput(required=True, name='input')
 
     @classmethod
     def mutate(cls, _, info, input_):
-        context = info.find_context
+        context = info.context
         everywhere = input_.get('everywhere', False)
 
         if context.user.is_authenticated:
-            cls.logout(info.find_context, everywhere)
+            cls.logout(info.context, everywhere)
 
         return cls.Output(message='Success')
 
@@ -82,12 +82,12 @@ class UpdateUser(mixins.UpdateUserMixin, graphene.Mutation):
     Output = outputs.UserType
 
     class Arguments:
-        input = inputs.UpdateUserInput(required=True)
+        input_ = inputs.UpdateUserInput(required=True, name='input')
 
     @classmethod
     @login_required
     def mutate(cls, _, info, input_):
-        context = info.find_context
+        context = info.context
         cls.update_user(context, input_)
         user_activity_signal.send(cls, user=context.user, activity=UserActivity.USER_UPDATED)
         return context.user
@@ -99,12 +99,12 @@ class PresignImagePresignUpload(mixins.ImagePresignMixin, graphene.Mutation):
     Output = outputs.PresignAWSImageUploadOutput
 
     class Arguments:
-        input = inputs.PresignAWSImageUploadInput(required=True)
+        input_ = inputs.PresignAWSImageUploadInput(required=True, name='input')
 
     @classmethod
     @login_required
     def mutate(cls, _, info, input_):
-        presign = cls.get_presign_upload(info.find_context.user, **input_)
+        presign = cls.get_presign_upload(info.context.user, **input_)
         url = presign.get('url')
         fields = presign.get('fields')
         fields_out = [{'key': key, 'value': fields[key]} for key in fields]
@@ -117,7 +117,7 @@ class RequestPasswordRecovery(mixins.PasswordRecoveryMixin, graphene.Mutation):
     Output = outputs.PasswordRecoveryOutput
 
     class Arguments:
-        input = inputs.PasswordRecoveryInput(required=True)
+        input_ = inputs.PasswordRecoveryInput(required=True, name='input')
 
     @classmethod
     @graphene.resolve_only_args
@@ -136,7 +136,7 @@ class UpdatePassword(mixins.ObtainPairMixin, mixins.UpdatePasswordMixin, graphen
     Output = outputs.AuthenticationOutput
 
     class Arguments:
-        input = inputs.UpdatePasswordInput(required=True)
+        input_ = inputs.UpdatePasswordInput(required=True, name='input')
 
     @classmethod
     @graphene.resolve_only_args

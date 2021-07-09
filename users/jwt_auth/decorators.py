@@ -4,16 +4,13 @@ from graphql.execution.execute import GraphQLResolveInfo
 from users.jwt_auth.exceptions import PermissionDenied
 
 
-def find_context():
+def find_context(func):
     """Find info(GraphQLResolveInfo instance) argument in resolvers or mutations and return context from that."""
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            info = next(arg for arg in args if isinstance(arg, GraphQLResolveInfo))
-            return func(info.context, *args, **kwargs)
+    def wrapper(*args, **kwargs):
+        info = next(arg for arg in args if isinstance(arg, GraphQLResolveInfo))
+        return func(info.context, *args, **kwargs)
 
-        return wrapper
-
-    return decorator
+    return wrapper
 
 
 def user_passes_test(test_func, exc=PermissionDenied):

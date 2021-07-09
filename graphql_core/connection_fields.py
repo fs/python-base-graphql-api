@@ -35,7 +35,7 @@ class FilterConnectionField(DjangoFilterConnectionField):
     def resolve_queryset(cls, connection, iterable, info, args, filtering_args, filterset_class):  # noqa: WPS211
         """Overriding filter kwargs definition."""
         qs = super(DjangoFilterConnectionField, cls).resolve_queryset(connection, iterable, info, args)  # noqa: WPS608
-        filterset = filterset_class(data=get_filter_kwargs(args, filtering_args), queryset=qs, request=info.find_context)
+        filterset = filterset_class(data=get_filter_kwargs(args, filtering_args), queryset=qs, request=info.context)
 
         if filterset.form.is_valid():
             return filterset.qs
