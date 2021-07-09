@@ -1,18 +1,17 @@
 from django.apps import apps
+from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser, UserManager
-from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from users.storages import S3DirectUploadStorage
 
 
 class UserQuerySet(UserManager):
+    """Custom queryset for User model."""
 
     def _create_user(self, email, password, **extra_fields):
-        """
-        Create and save a user with the given username, email, and password.
-        """
+        """Override for email as username support. Saved normalizing for login field."""
         if not email:
             raise ValueError('The given email must be set')
 
@@ -25,6 +24,7 @@ class UserQuerySet(UserManager):
         return user
 
     def create_user(self, email, **extra_fields):
+        """Changed from username to email."""
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
 
@@ -34,6 +34,7 @@ class UserQuerySet(UserManager):
         return self._create_user(email, **extra_fields)
 
     def create_superuser(self, email=None, password=None, **extra_fields):
+        """Override for email as username support."""
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
@@ -46,6 +47,8 @@ class UserQuerySet(UserManager):
 
 
 class User(AbstractUser):
+    """Custom user model."""
+
     email = models.EmailField(_('email address'), unique=True)
     avatar = models.ImageField(null=True, blank=True, storage=S3DirectUploadStorage())
 
@@ -57,6 +60,8 @@ class User(AbstractUser):
 
 
 class UserActivity(models.Model):
+    """User activity logging in DB."""
+
     USER_LOGGED_IN = 'USER_LOGGED_IN'
     USER_REGISTERED = 'USER_REGISTERED'
     USER_RESET_PASSWORD = 'USER_RESET_PASSWORD'
@@ -74,3 +79,10 @@ class UserActivity(models.Model):
     event = models.CharField(max_length=255, choices=EVENT_CHOICES)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='activities')
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'User activity'
+        verbose_name_plural = 'User activities'
+
+    def __str__(self):
+        return self.event

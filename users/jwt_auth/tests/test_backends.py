@@ -25,7 +25,7 @@ class BackendTest(UserAuthenticatedTestCase):
 
     def test_authenticate(self):
         """Test authenticate with true credentials."""
-        headers = self.get_auth_headers(self.access_token)
+        headers = get_auth_headers(self.access_token)
         request = self.info(headers=headers).context
         user = self.backend.authenticate(request)
         self.assertEqual(user, self.user)

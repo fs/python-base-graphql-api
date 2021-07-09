@@ -7,7 +7,7 @@ from users.jwt_auth.tests.testcases import UserAuthenticatedTestCase
 User = get_user_model()
 
 
-class DecoratorTest(UserAuthenticatedTestCase):
+class DecoratorTestMixin:
     """Abstract universal decorator test."""
 
     user_with_perms = None
@@ -52,7 +52,7 @@ class UserPassesTests(UserAuthenticatedTestCase):
             decorated_func(self.info(user=self.user))
 
 
-class LoginRequiredTest(DecoratorTest):
+class LoginRequiredTest(DecoratorTestMixin, UserAuthenticatedTestCase):
     """Testing info.context.user.is_authenticated decorator."""
 
     def setUp(self):
@@ -63,7 +63,7 @@ class LoginRequiredTest(DecoratorTest):
         self.user_without_perms = AnonymousUser()
 
 
-class StaffMemberRequiredTest(DecoratorTest):
+class StaffMemberRequiredTest(DecoratorTestMixin, UserAuthenticatedTestCase):
     """Testing info.context.user.is_staff decorator."""
 
     def setUp(self):
@@ -76,7 +76,7 @@ class StaffMemberRequiredTest(DecoratorTest):
         self.user_with_perms.save()
 
 
-class SuperuserRequiredTest(DecoratorTest):
+class SuperuserRequiredTest(DecoratorTestMixin, UserAuthenticatedTestCase):
     """Testing info.context.user.is_superuser decorator."""
 
     def setUp(self):
