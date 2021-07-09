@@ -1,7 +1,10 @@
-ci: make-env update-requirements lint run-test
+ci: make-env run update-requirements lint run-test
 
 make-env:
 	env > .env
+
+run:
+	sudo docker-compose up -d
 
 lint:
 	sudo docker exec python-base-graphql-api_web_1 flake8
