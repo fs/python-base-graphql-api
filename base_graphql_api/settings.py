@@ -1,7 +1,8 @@
-from pathlib import Path
-from decouple import config
 from datetime import timedelta
+from pathlib import Path
 
+import django_heroku
+from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -23,7 +24,6 @@ INSTALLED_APPS = [
     'django_filters',
     'users.jwt_auth',
     'users',
-
 ]
 
 MIDDLEWARE = [
@@ -154,3 +154,5 @@ EMAIL_USE_TLS = config('EMAIL_USE_TLS')
 EMAIL_PORT = config('EMAIL_PORT')
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+
+django_heroku.settings(locals())
