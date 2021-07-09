@@ -5,12 +5,13 @@ ENV  PYTHONFAULTHANDLER=1 \
   PYTHONHASHSEED=random \
   # pip:
   PIP_NO_CACHE_DIR=off \
-  PIP_DISABLE_PIP_VERSION_CHECK=on \
+  PIP_DISABLE_PIP_VERSION_CHECK=on
 
 RUN apt-get update \
   && apt-get install --no-install-recommends -y \
     bash \
     build-essential \
+    python3-dev \
     curl \
     make \
     gettext \
@@ -20,8 +21,8 @@ RUN apt-get update \
   # Cleaning cache:
   && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt /project/requirements.txt
-RUN  pip install -r   /project/requirements.txt
+COPY requirements.txt /app/requirements.txt
+RUN  pip install -r /app/requirements.txt
 COPY .env /app/.env
 WORKDIR /app
 
