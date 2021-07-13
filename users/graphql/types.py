@@ -22,7 +22,7 @@ class UserType(DjangoObjectType):
 
     def resolve_avatar(self, _):
         """User avatar url resolving."""
-        return self.avatar.url
+        return self.avatar.url if self.avatar else None
 
 
 class UserActivityType(DjangoObjectType):

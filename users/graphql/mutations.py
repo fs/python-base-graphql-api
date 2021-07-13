@@ -38,8 +38,7 @@ class SignUp(mixins.ObtainPairMixin, graphene.Mutation):
         input_ = inputs.SignUpInput(required=True, name='input')
 
     @classmethod
-    @graphene.resolve_only_args
-    def mutate(cls, _, input_):
+    def mutate(cls, _, info, input_):
         user = User.objects.create_user(**input_)
         tokens = cls.generate_pair(user)
         user_activity_signal.send(cls, user=user, activity=UserActivity.USER_REGISTERED)
@@ -121,8 +120,7 @@ class RequestPasswordRecovery(mixins.PasswordRecoveryMixin, graphene.Mutation):
         input_ = inputs.PasswordRecoveryInput(required=True, name='input')
 
     @classmethod
-    @graphene.resolve_only_args
-    def mutate(cls, _, input_):
+    def mutate(cls, _, info, input_):
         email = input_.get('email')
         user = cls.recovery(email)
         if user is not None:
@@ -140,8 +138,7 @@ class UpdatePassword(mixins.ObtainPairMixin, mixins.UpdatePasswordMixin, graphen
         input_ = inputs.UpdatePasswordInput(required=True, name='input')
 
     @classmethod
-    @graphene.resolve_only_args
-    def mutate(cls, _, input_):
+    def mutate(cls, _, info, input_):
         user = cls.update_password(**input_)
         tokens = cls.generate_pair(user)
         user_activity_signal.send(cls, user=user, activity=UserActivity.USER_RESET_PASSWORD)
