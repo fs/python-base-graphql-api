@@ -31,7 +31,7 @@ class RevokeTokenMixin:
     @classmethod
     def logout(cls, request, everywhere=False):
         """Revoking refresh tokens."""
-        if not hasattr(request, 'user'):
+        if not getattr(request, 'user', None):
             return None
 
         if everywhere:
@@ -71,7 +71,7 @@ class UpdateUserMixin:
     @staticmethod
     def update_user_fields(user, upd_fields):
         """Set updated values for user model."""
-        for field_name, field_val in upd_fields:
+        for field_name, field_val in upd_fields.items():
             setattr(user, field_name, field_val)
 
         user.save()
