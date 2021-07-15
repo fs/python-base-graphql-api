@@ -35,6 +35,7 @@ blocks:
     task:
       prologue:
         commands:
+          - echo "IMAGE_NAME=${IMAGE_NAME}" >> ~/.env
           - cp ~/.env ~/python-base-graphql-api/.env
           - 'docker pull "${IMAGE_NAME}"'
           - cp docker-compose.semaphore.yml docker-compose.override.yml
