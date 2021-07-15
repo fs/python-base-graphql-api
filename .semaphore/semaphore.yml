@@ -1,14 +1,50 @@
 version: v1.0
-name: Docker
+name: Python Base GraphQL API
 agent:
   machine:
     type: e1-standard-2
     os_image: ubuntu1804
+execution_time_limit:
+  hours: 1
+auto_cancel:
+  queued:
+    when: 'true'
+fail_fast:
+  stop:
+    when: 'true'
+global_job_config:
+  prologue:
+    commands:
+      - export DOCKER_REPO="docker.pkg.github.com/fs/python-base-graphql-api"
+      - 'export IMAGE_NAME="${DOCKER_REPO}/final:${SEMAPHORE_GIT_BRANCH}"'
+      - export BUNDLE_WITHOUT="development staging production"
+      - 'echo "${DOCKER_PASSWORD}" | docker login https://docker.pkg.github.com -u "${DOCKER_USERNAME}" --password-stdin'
+      - checkout
 blocks:
   - name: Build
     task:
+      secrets:
+        - name: github-docker-secrets
       jobs:
-        - name: docker build
+        - name: Docker build
           commands:
-            - checkout
-            - docker build -t your-image .
+            - 'docker pull "${IMAGE_NAME}" || true'
+            - 'docker build -t "${IMAGE_NAME}" --target Final --cache-from="${BUILDER_NAME}" --cache-from="${IMAGE_NAME}" --build-arg BUNDLE_WITHOUT="${BUNDLE_WITHOUT}" --build-arg BUNDLER_VERSION=2.1.4 .'
+            - 'docker push "${IMAGE_NAME}"'
+  - name: Run
+    task:
+      secrets:
+        - name: github-docker-secrets
+      prologue:
+        commands:
+          - 'docker pull "${IMAGE_NAME}"'
+          - make env-file
+      jobs:
+        - name: Run CI
+          commands:
+            - make ci
+promotions:
+  - name: Deploy to Heroku
+    pipeline_file: heroku.yml
+    auto_promote:
+      when: result = 'passed' and branch = 'master'
