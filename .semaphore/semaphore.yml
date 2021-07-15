@@ -13,6 +13,9 @@ fail_fast:
   stop:
     when: 'true'
 global_job_config:
+  secrets:
+    - name: github-docker-secrets
+    - name: python-base-secrets
   prologue:
     commands:
       - export DOCKER_REPO="docker.pkg.github.com/fs/python-base-graphql-api"
@@ -22,9 +25,6 @@ global_job_config:
 blocks:
   - name: Build
     task:
-      secrets:
-        - name: github-docker-secrets
-        - name: python-base-secrets
       jobs:
         - name: Docker build
           commands:
@@ -33,9 +33,6 @@ blocks:
             - 'docker push "${IMAGE_NAME}"'
   - name: Run
     task:
-      secrets:
-        - name: github-docker-secrets
-        - name: python-base-secrets
       prologue:
         commands:
           - 'docker pull "${IMAGE_NAME}"'
