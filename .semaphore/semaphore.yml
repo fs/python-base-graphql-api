@@ -35,10 +35,9 @@ blocks:
     task:
       prologue:
         commands:
+          - cp ~/.env ~/python-base-graphql-api/.env
           - 'docker pull "${IMAGE_NAME}"'
           - cp docker-compose.semaphore.yml docker-compose.override.yml
-          - 'echo "      image: ${IMAGE_NAME}" >> docker-compose.override.yml'
-          - cp ~/.env ~/python-base-graphql-api/.env
       jobs:
         - name: Run CI
           commands:
