@@ -24,6 +24,7 @@ blocks:
     task:
       secrets:
         - name: github-docker-secrets
+        - name: python-base-secrets
       jobs:
         - name: Docker build
           commands:
@@ -34,6 +35,7 @@ blocks:
     task:
       secrets:
         - name: github-docker-secrets
+        - name: python-base-secrets
       prologue:
         commands:
           - 'docker pull "${IMAGE_NAME}"'
