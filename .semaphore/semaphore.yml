@@ -17,7 +17,6 @@ global_job_config:
     commands:
       - export DOCKER_REPO="docker.pkg.github.com/fs/python-base-graphql-api"
       - 'export IMAGE_NAME="${DOCKER_REPO}/final:${SEMAPHORE_GIT_BRANCH}"'
-      - export BUNDLE_WITHOUT="development staging production"
       - 'echo "${DOCKER_PASSWORD}" | docker login https://docker.pkg.github.com -u "${DOCKER_USERNAME}" --password-stdin'
       - checkout
 blocks:
@@ -29,7 +28,7 @@ blocks:
         - name: Docker build
           commands:
             - 'docker pull "${IMAGE_NAME}" || true'
-            - 'docker build -t "${IMAGE_NAME}" --target Final --cache-from="${BUILDER_NAME}" --cache-from="${IMAGE_NAME}" --build-arg BUNDLE_WITHOUT="${BUNDLE_WITHOUT}" --build-arg BUNDLER_VERSION=2.1.4 .'
+            - 'docker build -t "${IMAGE_NAME}" --target Final --cache-from="${BUILDER_NAME}" --cache-from="${IMAGE_NAME}" .'
             - 'docker push "${IMAGE_NAME}"'
   - name: Run
     task:
