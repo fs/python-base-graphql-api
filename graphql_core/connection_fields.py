@@ -3,10 +3,9 @@ from graphene.utils.str_converters import to_snake_case as parse_to_snake_case
 from graphene_django.filter import DjangoFilterConnectionField
 
 
-def define_enum_as_filter_field(key, args, filters):
+def get_enum_as_input(args):
     """Parse enum to filter."""
-    for enum_value in args:
-        filters[key] = enum_value.name if getattr(enum_value, 'name', None) else enum_value
+    return [enum_value.name if getattr(enum_value, 'name', None) else enum_value for enum_value in args]
 
 
 def get_filter_kwargs(args, filtering_args):
@@ -17,13 +16,11 @@ def get_filter_kwargs(args, filtering_args):
             if key == 'order_by' and arg_value is not None:
                 arg_value = parse_to_snake_case(arg_value)
 
-            if isinstance(arg_value, list):
-                # Added for list of enums field (graphene.List(graphene.Enum))
-                # Without this line input enum values looks like '[ActivityEnum].[USER_LOGGED_IN]',
-                # where ActivityEnum - name of class, USER_LOGGED_IN - choices value of model field
-                define_enum_as_filter_field(key, args, filters)
-            else:
-                filters[key] = arg_value
+            is_list = isinstance(arg_value, list)
+            filters[key] = get_enum_as_input(arg_value) if is_list else arg_value
+            # Added for list of enums field (graphene.List(graphene.Enum))
+            # Without this line input enum values looks like '[ActivityEnum].[USER_LOGGED_IN]',
+            # where ActivityEnum - name of class, USER_LOGGED_IN - choices value of model field
 
     return filters
 
