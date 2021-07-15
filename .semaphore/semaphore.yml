@@ -39,7 +39,6 @@ blocks:
       prologue:
         commands:
           - 'docker pull "${IMAGE_NAME}"'
-          - make env-file
       jobs:
         - name: Run CI
           commands:
