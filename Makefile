@@ -1,13 +1,13 @@
-ci: make-env run lint run-test
+ci: build lint run-test
 
-make-env:
+env-file:
 	env > .env
 
-run:
-	sudo docker-compose build
+build:
+	sudo docker-compose up -d --build
 
 lint:
-	sudo docker exec python-base-graphql-api_web_1 flake8 users
+	sudo docker exec -t python-base-graphql-api_web_1 flake8 users
 
 run-test:
-	sudo docker exec python-base-graphql-api_web_1 python3 manage.py test
+	sudo docker exec -t python-base-graphql-api_web_1 python3 manage.py test
