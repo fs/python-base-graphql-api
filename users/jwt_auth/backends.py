@@ -1,7 +1,6 @@
 from jwt.exceptions import DecodeError
-
-import users.utils
-from users.jwt_auth import utils
+from users import utils as users_utils
+from users.jwt_auth import utils as jwt_utils
 from users.jwt_auth.exceptions import PermissionDenied
 
 
@@ -13,18 +12,18 @@ class JSONWebTokenBackend:
         if request is None:
             return None
 
-        access_token = utils.get_access_token_by_request(request)
+        access_token = jwt_utils.get_access_token_by_request(request)
 
         if access_token is None:
             return None
 
         try:
-            payload = utils.jwt_decode(access_token)
+            payload = jwt_utils.jwt_decode(access_token)
 
         except DecodeError:
             raise PermissionDenied()
 
-        user = users.utils.get_user_or_none(pk=payload.get('sub'))
+        user = users_utils.utils.get_user_or_none(pk=payload.get('sub'))
 
         if not user:
             return None
