@@ -31,6 +31,7 @@ blocks:
             - 'docker pull "${IMAGE_NAME}" || true'
             - 'docker build -t "${IMAGE_NAME}" --cache-from="${IMAGE_NAME}" .'
             - 'docker push "${IMAGE_NAME}"'
+            - cp ~/.env ~/python-base-graphql-api/.env
   - name: Run
     task:
       secrets:
