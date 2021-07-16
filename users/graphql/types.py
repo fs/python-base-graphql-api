@@ -53,5 +53,3 @@ class UserActivityType(DjangoObjectType):
     def get_queryset(cls, queryset, info):
         """Method for wrap user activity data in login_required decorator."""
         return queryset
-
-

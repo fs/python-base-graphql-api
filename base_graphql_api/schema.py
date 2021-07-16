@@ -1,5 +1,6 @@
 import graphene
 import users.graphql.mutations
+import users.graphql.mutations.mutation
 import users.graphql.resolvers
 from graphene_django.debug import DjangoDebug
 
@@ -15,7 +16,7 @@ class Query(
 
 class Mutation(
     graphene.ObjectType,
-    users.graphql.mutations.Mutation,
+    users.graphql.mutations.mutation.Mutation,
 ):
     """Main mutation for schema."""
 

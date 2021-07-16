@@ -32,8 +32,8 @@ class RefreshTokenTest(UserAuthenticatedTestCase):
 
     def test_save(self):
         """Test jti, created_at and token fields generation in save time."""
+        time.sleep(1)  # needed for timezone.now() difference
         refresh_token = self.model.objects.create(user=self.user)
-
         self.assertIsNotNone(refresh_token.jti)
         self.assertIsNotNone(refresh_token.created_at)
         self.assertIsNotNone(refresh_token.token)
@@ -44,7 +44,6 @@ class RefreshTokenTest(UserAuthenticatedTestCase):
         self.assertIsNone(refresh_token.revoked_at)
         refresh_token.revoke()
         self.assertIsNotNone(refresh_token.revoked_at)
-        self.assertTrue(refresh_token.is_revoked)
         self.assertFalse(refresh_token.is_active)
 
     def test_expires_at(self):

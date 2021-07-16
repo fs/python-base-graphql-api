@@ -66,6 +66,6 @@ def get_refresh_token_by_request(request):
 
 def generate_hash(string):
     """Generate unique hash by string."""
-    get_hash = hashlib.sha256()
+    get_hash = hashlib.new('MD5')  # noqa: S324
     get_hash.update(string.encode('utf-8'))
     return get_hash.hexdigest()

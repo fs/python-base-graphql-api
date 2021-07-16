@@ -51,7 +51,8 @@ class RefreshToken(models.Model):  # noqa: D101
 
     def save(self, *args, **kwargs):
         """Fields generation in save time."""
-        self.created_at = timezone.now()
+        if not self.created_at:
+            self.created_at = timezone.now()
 
         if not self.jti:
             self.jti = user_utils.generate_hash_for_user(self.user, self.created_at)
