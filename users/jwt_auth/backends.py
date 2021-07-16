@@ -23,7 +23,7 @@ class JSONWebTokenBackend:
         except DecodeError:
             raise PermissionDenied()
 
-        user = users_utils.utils.get_user_or_none(pk=payload.get('sub'))
+        user = users_utils.get_user_or_none(pk=payload.get('sub'))
 
         if not user:
             return None
