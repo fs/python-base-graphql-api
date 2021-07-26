@@ -1,4 +1,4 @@
-from typing import Dict, NoReturn, Optional, List
+from typing import Dict, List, NoReturn, Optional
 
 from django.contrib.auth import get_user_model
 from graphene.types import Context
