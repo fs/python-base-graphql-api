@@ -1,13 +1,21 @@
 import hashlib
 from calendar import timegm
+from datetime import datetime
+from typing import Dict, Literal, Optional, Union
 
 import jwt
 from django.conf import settings
+from graphene.types.context import Context
 
 jwt_settings = settings.JWT_SETTINGS
 
 
-def jwt_payload(user, expires, jti, token_type):
+def jwt_payload(
+    user,
+    expires: datetime,
+    jti: str,
+    token_type: Literal['access', 'refresh'],
+) -> Dict[str, Union[str, int]]:
     """Make dict with JWT params."""
     return {
         'sub': user.id,
@@ -17,7 +25,7 @@ def jwt_payload(user, expires, jti, token_type):
     }
 
 
-def jwt_encode(payload):
+def jwt_encode(payload: Dict[str, Union[str, int]]) -> str:
     """Encode payload to JWT token."""
     return jwt.encode(
         payload,
@@ -26,7 +34,7 @@ def jwt_encode(payload):
     )
 
 
-def jwt_decode(token):
+def jwt_decode(token: str) -> Dict[str, Union[str, int]]:
     """Decode token to payload."""
     return jwt.decode(
         token,
@@ -39,7 +47,7 @@ def jwt_decode(token):
     )
 
 
-def get_access_token_by_request(request):
+def get_access_token_by_request(request: Context) -> str:
     """Get access token from request headers."""
     auth = request.META.get(jwt_settings.get('JWT_AUTH_HEADER_NAME'), '').split()
     prefix = jwt_settings.get('JWT_AUTH_HEADER_PREFIX')
@@ -50,7 +58,7 @@ def get_access_token_by_request(request):
     return auth[1]
 
 
-def get_access_payload_by_request(request):
+def get_access_payload_by_request(request: Context) -> Dict[str, Union[str, int]]:
     """Get token payload from request."""
     access_token = get_access_token_by_request(request)
     try:
@@ -59,12 +67,12 @@ def get_access_payload_by_request(request):
         return None
 
 
-def get_refresh_token_by_request(request):
+def get_refresh_token_by_request(request: Context) -> Optional[str]:
     """Get refresh token from request cookies."""
     return request.COOKIES.get(jwt_settings.get('JWT_REFRESH_TOKEN_COOKIE_NAME'))
 
 
-def generate_hash(string):
+def generate_hash(string: str) -> str:
     """Generate unique hash by string."""
     get_hash = hashlib.new('MD5')  # noqa: S324
     get_hash.update(string.encode('utf-8'))

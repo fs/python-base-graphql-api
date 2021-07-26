@@ -4,6 +4,7 @@ wemake-python-styleguide
 flake8-pytest-style
 flake8-django
 flake8-logging-format
+django-stubs
 psycopg2
 
 Django==3.2.4

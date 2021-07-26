@@ -1,8 +1,8 @@
 from django.utils.translation import gettext_lazy as _
 
 
-class JSONWebTokenError(Exception):
-    """Raises in JWT authentication module."""
+class BaseError(Exception):
+    """Base abstract exception."""
 
     default_message = None
 
@@ -12,6 +12,10 @@ class JSONWebTokenError(Exception):
             message = self.default_message
 
         super().__init__(message)
+
+
+class JSONWebTokenError(BaseError):
+    """Raises in JWT authentication module."""
 
 
 class PermissionDenied(JSONWebTokenError):
@@ -26,12 +30,11 @@ class InvalidCredentials(JSONWebTokenError):
     default_message = _('Invalid credentials')
 
 
-class ResetTokenExpired(Exception):
-    """Raise in password recovery by reset token."""
+class ResetTokenException(BaseError):
+    """Exception for reset token errors."""
 
-    def __init__(self, message=None):
-        """Added default message."""
-        if message is None:
-            message = _('Reset token expired')
 
-        super().__init__(message)
+class ResetTokenInvalid(ResetTokenException):
+    """Raise in password recovery process."""
+
+    default_message = _('Reset token is invalid or expired')

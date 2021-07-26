@@ -1,12 +1,13 @@
 import graphene
+from users import mixins as users_mixins
 from users.graphql import inputs, outputs
-from users.jwt_auth import mixins
+from users.jwt_auth import mixins as jwt_mixins
 from users.jwt_auth.decorators import login_required
 from users.models import UserActivity
 from users.signals import user_activity_signal
 
 
-class UpdateUser(mixins.UpdateUserMixin, graphene.Mutation):
+class UpdateUser(users_mixins.UpdateUserMixin, graphene.Mutation):
     """User fields updating mutation. Also saves user avatar image."""
 
     Output = outputs.UserType
@@ -23,7 +24,7 @@ class UpdateUser(mixins.UpdateUserMixin, graphene.Mutation):
         return context.user
 
 
-class PresignImagePresignUpload(mixins.ImagePresignMixin, graphene.Mutation):
+class PresignImagePresignUpload(users_mixins.ImagePresignMixin, graphene.Mutation):
     """AWS image direct upload. Generate headers and url for direct image upload from frontend."""
 
     Output = outputs.PresignAWSImageUploadOutput
@@ -41,7 +42,7 @@ class PresignImagePresignUpload(mixins.ImagePresignMixin, graphene.Mutation):
         return cls.Output(url=url, fields=fields_out)
 
 
-class RequestPasswordRecovery(mixins.PasswordRecoveryMixin, graphene.Mutation):
+class RequestPasswordRecovery(users_mixins.PasswordRecoveryMixin, graphene.Mutation):
     """User password recovering process."""
 
     Output = outputs.PasswordRecoveryOutput
@@ -59,7 +60,7 @@ class RequestPasswordRecovery(mixins.PasswordRecoveryMixin, graphene.Mutation):
         return cls.Output()
 
 
-class UpdatePassword(mixins.ObtainPairMixin, mixins.UpdatePasswordMixin, graphene.Mutation):
+class UpdatePassword(jwt_mixins.ObtainPairMixin, users_mixins.UpdatePasswordMixin, graphene.Mutation):
     """User password recovering by reset token."""
 
     Output = outputs.AuthenticationOutput

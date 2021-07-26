@@ -1,4 +1,4 @@
-FROM python:3.7.7-slim-buster
+FROM python:3.9.6-slim-buster
 
 ENV  PYTHONFAULTHANDLER=1 \
   PYTHONUNBUFFERED=1 \

@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import RequestFactory, TestCase
 from graphql.execution.execute import GraphQLResolveInfo
+from users.jwt_auth.middleware import TokenAuthenticationMiddleware
 from users.jwt_auth.mixins import ObtainPairMixin
 from users.jwt_auth.models import RefreshToken
 
@@ -55,4 +56,7 @@ class UserAuthenticatedTestCase(ABC, ObtainPairMixin, TestCase):
 
         cookies = {refresh_token_cookie_name: refresh_token or self.refresh_token}
 
-        return self.info(user=None, headers=headers, cookies=cookies)
+        authenticated_info = self.info(user=None, headers=headers, cookies=cookies)
+
+        TokenAuthenticationMiddleware().resolve(mock.Mock(), None, authenticated_info)
+        return authenticated_info

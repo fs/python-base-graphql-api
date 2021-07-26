@@ -1,19 +1,23 @@
+from typing import Optional, Union
+
 from django.conf import settings
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.utils.functional import SimpleLazyObject
+from graphene.types import Context
 from users.jwt_auth import utils
 from users.jwt_auth.models import RefreshToken
 
 jwt_settings = settings.JWT_SETTINGS
+User = get_user_model()
 
 
-def get_user(context):
+def get_user(context: Context) -> Union[User, AnonymousUser, None]:
     """Needed for wrap in simple lazy object."""
     return getattr(context, '_cached_user', authenticate(context) or AnonymousUser())
 
 
-def get_refresh_token_instance(context):
+def get_refresh_token_instance(context: Context) -> Optional[RefreshToken]:
     """Return refresh token instance by request."""
     access_payload = utils.get_access_payload_by_request(context)
 
@@ -27,7 +31,7 @@ def get_refresh_token_instance(context):
         return None
 
 
-def get_refresh_token(context):
+def get_refresh_token(context: Context) -> Optional[RefreshToken]:
     """Needed for wrap in simple lazy object."""
     return getattr(context, '_cached_refresh_token', get_refresh_token_instance(context))
 

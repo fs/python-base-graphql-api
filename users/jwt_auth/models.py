@@ -1,3 +1,6 @@
+from datetime import datetime
+from typing import Dict, NoReturn, Union
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
@@ -13,22 +16,25 @@ User = get_user_model()
 class RefreshTokenQuerySet(models.QuerySet):
     """Methods for comfort work with refresh tokens."""
 
-    def revoke_all_for_user(self, user):
+    def revoke_all_for_user(self, user: User):
         """Revoking all tokens for user."""
         self.get_active_tokens_for_sub(user.id).update(revoked_at=timezone.now())
 
-    def get_active_tokens_for_sub(self, sub, **kwargs):
+    def get_active_tokens_for_sub(self, sub: Union[str, int], **kwargs):
         """Filter active tokens for JWT sub(user id)."""
         return self.filter_active_tokens(user__id=sub, **kwargs)
 
     def filter_active_tokens(self, **kwargs):
         """Filter all active tokens."""
-        created_at = timezone.now() - jwt_settings.get('REFRESH_TOKEN_EXPIRATION_DELTA')
-        return self.filter(created_at__gt=created_at, revoked_at__isnull=True, **kwargs)
+        expires_at_by_now = timezone.now() - jwt_settings.get('REFRESH_TOKEN_EXPIRATION_DELTA')
+        return self.filter(created_at__gt=expires_at_by_now, revoked_at__isnull=True, **kwargs)
 
-    def access_token_is_active(self, jti, **kwargs):
+    def access_token_is_active(self, jti: str, **kwargs) -> bool:
         """Check tokens is active by JTI. Usually uses for access token revoking check."""
         return self.filter_active_tokens(jti=jti, **kwargs).exists()
+
+
+RefreshTokenManager = models.Manager.from_queryset(RefreshTokenQuerySet)
 
 
 class RefreshToken(models.Model):  # noqa: D101
@@ -39,7 +45,7 @@ class RefreshToken(models.Model):  # noqa: D101
     created_at = models.DateTimeField()
     revoked_at = models.DateTimeField(null=True, blank=True)
 
-    objects = RefreshTokenQuerySet.as_manager()
+    objects = RefreshTokenManager()
 
     class Meta:
         unique_together = ('token', 'created_at', 'jti')
@@ -64,28 +70,40 @@ class RefreshToken(models.Model):  # noqa: D101
         return super().save(*args, **kwargs)
 
     @property
-    def expires_at(self):
+    def expires_at(self) -> datetime:
         """Compute expires at datetime."""
         return self.created_at + jwt_settings.get('REFRESH_TOKEN_EXPIRATION_DELTA')
 
     @property
-    def is_expired(self):
+    def is_expired(self) -> bool:
         """Refresh token expires."""
         return self.expires_at > timezone.now()
 
     @property
-    def is_active(self):
+    def is_active(self) -> bool:
         """Check refresh token is active: is not revoked and not expired."""
         return not (self.revoked_at is not None or self.is_expired)
 
-    def get_payload_by_token(self):
+    def get_payload_by_token(self) -> Dict[str, Union[int, str]]:
         """Token decoding by JWT algorithm."""
         return utils.jwt_decode(self.token)
 
-    def revoke(self):
+    def revoke(self) -> NoReturn:
         """Revoke refresh token."""
         self.revoked_at = timezone.now()
         self.save()
+
+
+class ResetTokenQuerySet(models.QuerySet):
+    """Reset token QuerySet."""
+
+    def get_active_token(self, token: str):
+        """Get active token."""
+        expires_at_by_now = timezone.now() - jwt_settings.PASS_RESET_TOKEN_EXPIRATION_DELTA
+        return self.get(created_at__gt=expires_at_by_now, token=token)
+
+
+ResetTokenManager = models.Manager.from_queryset(ResetTokenQuerySet)
 
 
 class ResetToken(models.Model):  # noqa: D101
@@ -93,6 +111,8 @@ class ResetToken(models.Model):  # noqa: D101
     is_used = models.BooleanField(default=False)
     created_at = models.DateTimeField()
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='reset_tokens')
+
+    objects = ResetTokenManager()
 
     class Meta:
         verbose_name = 'Reset token'
@@ -112,12 +132,12 @@ class ResetToken(models.Model):  # noqa: D101
         return super().save(*args, **kwargs)
 
     @property
-    def is_expired(self):
+    def is_expired(self) -> bool:
         """Check token is expired."""
         return timezone.now() > (self.created_at + settings.PASS_RESET_TOKEN_EXPIRATION_DELTA)
 
     @property
-    def is_active(self):
+    def is_active(self) -> bool:
         """Check token is not expired and not used."""
         return self.is_expired and not self.is_used
 
