@@ -90,5 +90,6 @@ class UpdateTokenPairMixinTest(mixins.UpdateTokenPairMixin, MiddlewareSetupMixin
     def test_non_authenticated_request(self):
         """Test update pair with non authenticated request."""
         request = self.info().context
+        request.user = AnonymousUser()
         with self.assertRaises(PermissionDenied):
             self.update_pair(request)

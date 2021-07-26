@@ -1,14 +1,15 @@
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import AbstractUser, UserManager
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import UserManager as DjangoUserManager
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from users.exceptions import UserAlreadyJoined
 from users.storages import S3DirectUploadStorage
 
 
-class UserQuerySet(UserManager):
+class UserManager(DjangoUserManager):
     """Custom queryset for User model."""
 
     def create_user(self, email, **extra_fields):
@@ -20,6 +21,14 @@ class UserQuerySet(UserManager):
             raise UserAlreadyJoined()
 
         return self._create_user(email, **extra_fields)
+
+    def get_user_or_none(self, **kwargs):
+        """Get user without exception."""
+        try:
+            return self.get(**kwargs)
+
+        except self.model.DoesNotExist:
+            return None
 
     def create_superuser(self, email=None, password=None, **extra_fields):
         """Override for email as username support."""
@@ -53,7 +62,7 @@ class User(AbstractUser):
     email = models.EmailField(_('email address'), unique=True)
     avatar = models.ImageField(null=True, blank=True, storage=S3DirectUploadStorage())
 
-    objects = UserQuerySet()
+    objects = UserManager()
 
     USERNAME_FIELD = 'email'
     username = None

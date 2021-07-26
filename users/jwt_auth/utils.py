@@ -5,15 +5,13 @@ from typing import Dict, Literal, Optional, Union
 
 import jwt
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from graphene.types.context import Context
 
 jwt_settings = settings.JWT_SETTINGS
-User = get_user_model()
 
 
 def jwt_payload(
-    user: User,
+    user,
     expires: datetime,
     jti: str,
     token_type: Literal['access', 'refresh'],

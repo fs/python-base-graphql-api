@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model
@@ -12,7 +12,7 @@ jwt_settings = settings.JWT_SETTINGS
 User = get_user_model()
 
 
-def get_user(context: Context) -> Optional[User, AnonymousUser]:
+def get_user(context: Context) -> Union[User, AnonymousUser, None]:
     """Needed for wrap in simple lazy object."""
     return getattr(context, '_cached_user', authenticate(context) or AnonymousUser())
 

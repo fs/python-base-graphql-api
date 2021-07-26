@@ -1,7 +1,9 @@
+from django.contrib.auth import get_user_model
 from jwt.exceptions import DecodeError
-from users import utils as users_utils
 from users.jwt_auth import utils as jwt_utils
 from users.jwt_auth.exceptions import PermissionDenied
+
+User = get_user_model()
 
 
 class JSONWebTokenBackend:
@@ -23,7 +25,7 @@ class JSONWebTokenBackend:
         except DecodeError:
             raise PermissionDenied()
 
-        user = users_utils.get_user_or_none(pk=payload.get('sub'))
+        user = User.objects.get_user_or_none(pk=payload.get('sub'))
 
         if not user:
             return None

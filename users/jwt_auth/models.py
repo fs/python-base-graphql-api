@@ -34,6 +34,9 @@ class RefreshTokenQuerySet(models.QuerySet):
         return self.filter_active_tokens(jti=jti, **kwargs).exists()
 
 
+RefreshTokenManager = models.Manager.from_queryset(RefreshTokenQuerySet)
+
+
 class RefreshToken(models.Model):  # noqa: D101
     id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='refresh_tokens')
@@ -42,7 +45,7 @@ class RefreshToken(models.Model):  # noqa: D101
     created_at = models.DateTimeField()
     revoked_at = models.DateTimeField(null=True, blank=True)
 
-    objects = RefreshTokenQuerySet.as_manager()
+    objects = RefreshTokenManager()
 
     class Meta:
         unique_together = ('token', 'created_at', 'jti')
@@ -91,12 +94,6 @@ class RefreshToken(models.Model):  # noqa: D101
         self.save()
 
 
-def kek():
-    """Test func."""
-    token = ResetToken.objects.first()
-    return token.kek
-
-
 class ResetTokenQuerySet(models.QuerySet):
     """Reset token QuerySet."""
 
@@ -106,13 +103,16 @@ class ResetTokenQuerySet(models.QuerySet):
         return self.get(created_at__gt=expires_at_by_now, token=token)
 
 
+ResetTokenManager = models.Manager.from_queryset(ResetTokenQuerySet)
+
+
 class ResetToken(models.Model):  # noqa: D101
     token = models.CharField(max_length=255, editable=False)
     is_used = models.BooleanField(default=False)
     created_at = models.DateTimeField()
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='reset_tokens')
 
-    objects = ResetTokenQuerySet.as_manager()
+    objects = ResetTokenManager()
 
     class Meta:
         verbose_name = 'Reset token'
