@@ -1,9 +1,23 @@
+from datetime import timedelta
+from unittest import mock
+
 from django.contrib.auth.models import AnonymousUser
+from django.utils import timezone
 from users.jwt_auth import mixins
 from users.jwt_auth.exceptions import PermissionDenied
+from users.jwt_auth.middleware import TokenAuthenticationMiddleware
 from users.jwt_auth.models import RefreshToken
 from users.jwt_auth.tests.testcases import UserAuthenticatedTestCase
 from users.jwt_auth.utils import jwt_decode
+
+
+class MiddlewareSetupMixin:
+    """Mixin for middleware setup."""
+
+    def setUp(self):
+        """Setup authentication middleware resolver."""
+        super().setUp()
+        self.middleware_resolver = TokenAuthenticationMiddleware().resolve
 
 
 class ObtainPairMixinTest(UserAuthenticatedTestCase):
@@ -29,8 +43,52 @@ class ObtainPairMixinTest(UserAuthenticatedTestCase):
             self.generate_pair(anonymous_user)
 
 
-class RevokeTokenMixinTest(mixins.RevokeTokenMixin, UserAuthenticatedTestCase):
-    """Token revoking mixin. """
+class RevokeTokenMixinTest(mixins.RevokeTokenMixin, MiddlewareSetupMixin, UserAuthenticatedTestCase):
+    """Test token revoking by mocked request."""
 
-    def test_revoke_token(self):
-        pass
+    def test_revoke_single_token(self):
+        """Test token revoking in authenticated in current session."""
+        authenticated_info = self.get_authenticated_info_context()
+        everywhere = False
+        self.generate_refresh_tokens()
+        self.logout(request=authenticated_info.context, everywhere=everywhere)
+        self.assertFalse(self.refresh_token_instance.is_active)
+        self.assertTrue(RefreshToken.objects.get_active_tokens_for_sub(self.user.pk).exists())
+
+    def generate_refresh_tokens(self):
+        """Generate refresh tokens with different creation time."""
+        now = timezone.now()
+        created_at_times = [now + timedelta(hours=index) for index in range(1, 5)]
+
+        for created_at in created_at_times:
+            RefreshToken.objects.create(user=self.user, created_at=created_at)
+
+    def test_revoke_all_user_tokens(self):
+        """Test token revoking in all user sessions."""
+        authenticated_info = self.get_authenticated_info_context()
+        everywhere = True
+        self.generate_refresh_tokens()
+
+        self.logout(request=authenticated_info.context, everywhere=everywhere)
+        self.assertFalse(RefreshToken.objects.get_active_tokens_for_sub(self.user.pk).exists())
+
+    def test_revoke_session(self):
+        """Test session revoking."""
+        authenticated_info = self.get_authenticated_info_context()
+        context = authenticated_info.context
+        self.logout(request=context)
+        next_middleware = mock.Mock()
+        self.middleware_resolver(next_middleware, None, authenticated_info)
+
+        self.assertFalse(context.user.is_authenticated)
+        self.assertEqual(context.refresh_token, None)
+
+
+class UpdateTokenPairMixinTest(mixins.UpdateTokenPairMixin, MiddlewareSetupMixin, UserAuthenticatedTestCase):
+    """Test token pair updating by authenticated request."""
+
+    def test_non_authenticated_request(self):
+        """Test update pair with non authenticated request."""
+        request = self.info().context
+        with self.assertRaises(PermissionDenied):
+            self.update_pair(request)

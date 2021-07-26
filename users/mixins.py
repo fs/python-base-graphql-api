@@ -1,13 +1,18 @@
-from users.jwt_auth.exceptions import InvalidCredentials, ResetTokenExpired
-from users.jwt_auth.mixins import User
+from typing import Dict, NoReturn, Optional, List
+
+from django.contrib.auth import get_user_model
+from graphene.types import Context
+from users.jwt_auth.exceptions import InvalidCredentials, ResetTokenInvalid
 from users.jwt_auth.models import ResetToken
+
+User = get_user_model()
 
 
 class UpdateUserMixin:
     """Mixin for user fields update."""
 
     @staticmethod
-    def change_password(user, current_password, password):
+    def change_password(user: User, current_password: str, password: str) -> NoReturn:
         """Check and set password for user."""
         password_is_true = user.check_password(current_password)
 
@@ -17,12 +22,12 @@ class UpdateUserMixin:
         user.set_password(password)
 
     @staticmethod
-    def update_avatar(user, avatar):
+    def update_avatar(user: User, avatar: Dict[str, Optional[str, Dict]]) -> NoReturn:
         """Saving user avatar url from AWS."""
         user.avatar.save(avatar.get('id'), content=None)
 
     @staticmethod
-    def update_user_fields(user, upd_fields):
+    def update_user_fields(user: User, upd_fields: Dict[str, str]):
         """Set updated values for user model."""
         for field_name, field_val in upd_fields.items():
             setattr(user, field_name, field_val)
@@ -30,7 +35,7 @@ class UpdateUserMixin:
         user.save()
 
     @classmethod
-    def update_user(cls, request, input_):
+    def update_user(cls, request: Context, input_: Dict[str, Optional[str, Dict]]) -> NoReturn:
         """Update user fields."""
         user = request.user
         current_password = input_.pop('current_password')
@@ -50,7 +55,7 @@ class ImagePresignMixin:
     """Mixin for image direct uploading."""
 
     @classmethod
-    def get_presign_upload(cls, user, filename, file_type):
+    def get_presign_upload(cls, user: User, filename: str, file_type: str) -> List[Dict[str, str]]:
         """Generate url and headers for AWS direct upload from frontend."""
         return user.avatar.storage.generate_presigned_post(filename, file_type)
 
@@ -59,7 +64,7 @@ class PasswordRecoveryMixin:
     """Mixin for user password recovery request."""
 
     @classmethod
-    def recovery(cls, email):
+    def recovery(cls, email: str) -> Optional[User]:
         """Create reset token and send password recovery email."""
         user = User.objects.filter(email=email)
 
@@ -74,11 +79,12 @@ class UpdatePasswordMixin:
     """Updating password by received email with reset token."""
 
     @classmethod
-    def update_password(cls, password, reset_token):
+    def update_password(cls, password: str, reset_token: str) -> User:
         """Setting new password for user by reset token."""
-        reset_token = ResetToken.objects.get(token=reset_token)
-        if not reset_token.is_active:
-            raise ResetTokenExpired()
+        try:
+            reset_token = ResetToken.objects.get_active_token(token=reset_token)
+        except ResetToken.DoesNotExist:
+            raise ResetTokenInvalid()
 
         reset_token.set_password(password)
         return reset_token.user

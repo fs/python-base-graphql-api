@@ -1,7 +1,10 @@
 from functools import partial, wraps
 
+from django.contrib.auth import get_user_model
 from graphql.execution.execute import GraphQLResolveInfo
 from users.jwt_auth.exceptions import PermissionDenied
+
+User = get_user_model()
 
 
 def find_context(func):
@@ -28,7 +31,7 @@ def user_passes_test(test_func, exc=PermissionDenied):
     return decorator
 
 
-def check_perms(user, perm):
+def check_perms(user: User, perm: str) -> bool:
     """Check user having permission."""
     if isinstance(perm, str):
         perms = (perm,)
@@ -37,7 +40,7 @@ def check_perms(user, perm):
     return user.has_perms(perms)
 
 
-def permission_required(perm):
+def permission_required(perm: str):
     """Permission required decorator like in django."""
     func = partial(check_perms, perm=perm)
     return user_passes_test(func)

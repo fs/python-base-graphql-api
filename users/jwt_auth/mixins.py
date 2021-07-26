@@ -1,5 +1,8 @@
+from typing import NoReturn, Optional, Dict
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from graphene.types import Context
 from users.jwt_auth.exceptions import PermissionDenied
 from users.jwt_auth.models import RefreshToken
 from users.jwt_auth.utils import jwt_encode
@@ -12,7 +15,7 @@ class ObtainPairMixin:
     """Mixin for tokens pair generation by user."""
 
     @classmethod
-    def generate_pair(cls, user):
+    def generate_pair(cls, user: User) -> Dict[str, str]:
         """Create tokens pair with same JTI."""
         if not isinstance(user, User):
             raise PermissionDenied()
@@ -32,7 +35,7 @@ class RevokeTokenMixin:
     """Mixin for user logout."""
 
     @classmethod
-    def logout(cls, request, everywhere=False):
+    def logout(cls, request: Context, everywhere: Optional[bool] = False) -> NoReturn:
         """Revoking refresh tokens."""
         user = request.user
         if not isinstance(user, User):
@@ -48,7 +51,7 @@ class UpdateTokenPairMixin(ObtainPairMixin):
     """Mixin for updating tokens."""
 
     @classmethod
-    def update_pair(cls, request):
+    def update_pair(cls, request: Context) -> Dict[str, str]:
         """Revoking and generation tokens."""
         if not request.user.is_authenticated:
             raise PermissionDenied()
