@@ -2,39 +2,30 @@
 
 ## Getting started
 
-Create `.env` file with `.env.example` keys
-
-Setup virtual environment: 
-```shell
-python -m venv venv
-```
-
-Activate venv: 
-```shell
-.\venv\Scripts\activate # For Windows
-source venv/bin/activate # For Linux and MacOS
-```
+Create `.env` file with `.env.example` keys in `config` folder.
 
 Install dependencies:
 ```shell
-pip install -r requirements.txt
+poetry install
 ```
 
 Make database migrations:
 ```shell
-python manage.py migrate
+poetry run python manage.py migrate
 ```
 
 Create superuser for admin panel access:
 ```shell
-python manage.py createsuperuser
+poetry run python manage.py createsuperuser
 ```
 
 Run server:
 ```shell
-python manage.py runserver 0.0.0.0:8000
+poetry run python manage.py runserver
 ```
 
+## Admin panel
+With superuser credentials you can sign in admin panel `http://localhost:8000/admin/`
 
 ## GraphQL
 
