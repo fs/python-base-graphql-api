@@ -8,8 +8,10 @@ services:
         - .env
 
     web:
-      build: .
-      command: python3 manage.py runserver 0.0.0.0:8000
+      build:
+        contex: .
+        dockerfile: <ProjectFolder>/docker/django/Dockerfile
+      command: poetry run python3 manage.py runserver 0.0.0.0:8000
       environment:
         - POSTGRES_HOST=db
       volumes:
