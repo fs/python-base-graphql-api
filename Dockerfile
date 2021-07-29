@@ -21,7 +21,7 @@ RUN apt-get update \
   # Cleaning cache:
   && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt /app/requirements.txt
+#COPY requirements.txt /app/requirements.txt
 RUN  pip install --no-cache-dir -r /app/requirements.txt
 COPY ../.. /app
 WORKDIR /app
