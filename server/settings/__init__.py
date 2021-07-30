@@ -26,6 +26,8 @@ _base_settings = (
     'components/common.py',
     'components/logging.py',
     'components/graphene.py',
+    'components/aws_storage.py',
+    'components/jwt_authentication.py',
 
     # Select the right env:
     'environments/{0}.py'.format(_ENV),

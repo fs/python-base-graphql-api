@@ -1,7 +1,6 @@
-from datetime import timedelta
 from pathlib import Path
 
-from decouple import config
+from server.settings.components import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,8 +19,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'graphene_django',
     'django_filters',
+
+    # Apps
     'server.core.authentication.jwt',
     'server.apps.users',
+
+    # Health check
+    'health_check',
+    'health_check.db',
+    'health_check.storage',
+    'health_check.contrib.s3boto3_storage',
 ]
 
 MIDDLEWARE = [
@@ -52,7 +59,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'base_graphql_api.wsgi.application'
+WSGI_APPLICATION = 'server.wsgi.application'
 
 
 # Database
@@ -72,7 +79,7 @@ DATABASES = {
 AUTH_USER_MODEL = 'users.User'
 
 AUTHENTICATION_BACKENDS = [
-    'users.jwt_auth.backends.JSONWebTokenBackend',
+    'server.core.authentication.jwt.backends.JSONWebTokenBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
 
@@ -116,26 +123,6 @@ STATIC_ROOT = BASE_DIR.joinpath('static')
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-JWT_SETTINGS = {
-    'REFRESH_TOKEN_EXPIRATION_DELTA': timedelta(days=30),
-    'ACCESS_TOKEN_EXPIRATION_DELTA': timedelta(hours=1),
-    'JWT_AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
-    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
-    'JWT_REFRESH_TOKEN_COOKIE_NAME': 'refreshToken',
-    'JWT_SECRET_KEY': SECRET_KEY,
-    'JWT_ALGORITHM': 'HS256',
-    'JWT_VERIFY_EXPIRATION': True,
-    'JWT_VERIFY': True,
-}
-
-AWS_ACCESS_KEY_ID = config('S3_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = config('S3_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = config('S3_BUCKET_NAME')
-AWS_S3_REGION_NAME = config('S3_BUCKET_REGION')
-AWS_S3_MAX_MEMORY_SIZE = 10 * 1024 * 1024
-
-PASS_RESET_TOKEN_EXPIRATION_DELTA = timedelta(days=1)
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = config('EMAIL_HOST')
