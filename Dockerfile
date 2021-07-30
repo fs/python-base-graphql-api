@@ -23,7 +23,7 @@ RUN apt-get update \
 
 RUN pip install poetry
 COPY pyproject.toml /app/pyproject.toml
-COPY ../.. /app
+COPY ../../app
 WORKDIR /app
 RUN poetry install
 
