@@ -21,10 +21,10 @@ RUN apt-get update \
   # Cleaning cache:
   && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
-RUN pip install poetry
+RUN pip install --no-cache-dir -r poetry
 COPY pyproject.toml /app/pyproject.toml
-COPY ../../app
-WORKDIR /app
 RUN poetry install
+COPY ../.. /app
+WORKDIR /app
 
 
