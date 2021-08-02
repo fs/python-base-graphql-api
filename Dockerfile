@@ -23,7 +23,7 @@ RUN apt-get update \
 
 RUN pip install poetry
 COPY poetry.lock pyproject.toml /code/
-RUN poetry config virtualenvs.create false && poetry install
+RUN cd code && poetry config virtualenvs.create false && poetry install
 COPY . /code
 WORKDIR /code
 
