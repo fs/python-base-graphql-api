@@ -1,2 +1,2 @@
-web: gunicorn base_graphql_api.wsgi
+web: gunicorn server.wsgi
 release: python manage.py migrate
