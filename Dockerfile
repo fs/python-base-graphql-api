@@ -22,7 +22,7 @@ RUN apt-get update \
   && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 RUN pip install poetry
-COPY pyproject.toml app/pyproject.toml
+COPY pyproject.toml /pyproject.toml
 RUN poetry install
 COPY ./ /app
 WORKDIR /app
