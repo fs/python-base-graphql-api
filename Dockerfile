@@ -22,9 +22,9 @@ RUN apt-get update \
   && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 RUN pip install poetry
-COPY pyproject.toml /pyproject.toml
-RUN poetry install
-COPY ./ /app
-WORKDIR /app
+COPY poetry.lock pyproject.toml /code/
+RUN poetry config virtualenvs.create false && poetry install
+COPY . /code
+WORKDIR /code
 
 
