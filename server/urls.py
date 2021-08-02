@@ -11,10 +11,8 @@ files serving technique in development.
 
 from django.conf import settings
 from django.contrib import admin
-from django.contrib.admindocs import urls as admindocs_urls
 from django.urls import include, path, re_path
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import TemplateView
 from graphene_django.views import GraphQLView
 from health_check import urls as health_urls
 
@@ -22,27 +20,13 @@ admin.autodiscover()
 
 urlpatterns = [
     # Apps:
-    re_path(r'^graphql', csrf_exempt(GraphQLView.as_view(graphiql=True))),
+    re_path('graphql', csrf_exempt(GraphQLView.as_view(graphiql=True))),
 
     # Health checks:
     path('health/', include(health_urls)),  # noqa: DJ05
 
     # django-admin:
-    path('admin/doc/', include(admindocs_urls)),  # noqa: DJ05
     path('admin/', admin.site.urls),
-
-    # Text and xml static files:
-    path('robots.txt', TemplateView.as_view(
-        template_name='txt/robots.txt',
-        content_type='text/plain',
-    )),
-    path('humans.txt', TemplateView.as_view(
-        template_name='txt/humans.txt',
-        content_type='text/plain',
-    )),
-
-    # It is a good practice to have explicit index view:
-    # path('', index, name='index'),
 ]
 
 if settings.DEBUG:  # pragma: no cover
