@@ -1,8 +1,8 @@
 from datetime import timedelta
 
 from django.utils import timezone
-from users.jwt_auth import utils
-from users.jwt_auth.tests import testcases
+from server.core.authentication.jwt import utils
+from tests.test_server.test_jwt import testcases
 
 
 class JWTTest(testcases.UserAuthenticatedTestCase):

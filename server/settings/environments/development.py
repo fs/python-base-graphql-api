@@ -30,7 +30,7 @@ ALLOWED_HOSTS = [
 
 INSTALLED_APPS += (
     # Better debug:
-    # 'debug_toolbar',
+    'debug_toolbar',
 )
 
 
@@ -44,17 +44,18 @@ STATICFILES_DIRS: List[str] = []
 # https://django-debug-toolbar.readthedocs.io
 
 MIDDLEWARE += (
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 
     # https://github.com/bradmontgomery/django-querycount
     # Prints how many queries were executed, useful for the APIs.
-    # 'querycount.middleware.QueryCountMiddleware',
+    'querycount.middleware.QueryCountMiddleware',
 )
 
 
 def _custom_show_toolbar(request):
     """Only show the debug toolbar to users with the superuser flag."""
     return DEBUG and request.user.is_superuser
+
 
 # Disable persistent DB connections
 # https://docs.djangoproject.com/en/3.2/ref/databases/#caveats

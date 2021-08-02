@@ -3,8 +3,8 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.utils import timezone
-from users.jwt_auth.models import RefreshToken, ResetToken
-from users.jwt_auth.tests.testcases import UserAuthenticatedTestCase
+from server.core.authentication.jwt.models import RefreshToken, ResetToken
+from tests.test_server.test_jwt.testcases import UserAuthenticatedTestCase
 
 jwt_settings = settings.JWT_SETTINGS
 

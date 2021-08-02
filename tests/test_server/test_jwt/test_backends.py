@@ -1,7 +1,7 @@
 from django.conf import settings
-from users.jwt_auth import backends
-from users.jwt_auth.exceptions import PermissionDenied
-from users.jwt_auth.tests.testcases import UserAuthenticatedTestCase
+from server.core.authentication.jwt import backends
+from server.core.authentication.jwt.exceptions import PermissionDenied
+from tests.test_server.test_jwt.testcases import UserAuthenticatedTestCase
 
 jwt_settings = settings.JWT_SETTINGS
 

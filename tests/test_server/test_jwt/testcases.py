@@ -5,9 +5,9 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import RequestFactory, TestCase
 from graphql.execution.execute import GraphQLResolveInfo
-from users.jwt_auth.middleware import TokenAuthenticationMiddleware
-from users.jwt_auth.mixins import ObtainPairMixin
-from users.jwt_auth.models import RefreshToken
+from server.core.authentication.jwt.middleware import TokenAuthenticationMiddleware
+from server.core.authentication.jwt.mixins import ObtainPairMixin
+from server.core.authentication.jwt.models import RefreshToken
 
 jwt_settings = settings.JWT_SETTINGS
 User = get_user_model()
