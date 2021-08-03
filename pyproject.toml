@@ -45,6 +45,7 @@ graphene-django = {version = "3.0b7", allow-prereleases = true}
 graphql-core = "^3.1.5"
 
 
+
 [tool.poetry.dev-dependencies]
 django-debug-toolbar = "^3.2"
 django-querycount = "^0.7"
