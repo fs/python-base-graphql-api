@@ -29,6 +29,9 @@ INSTALLED_APPS = [
     'health_check.db',
     'health_check.storage',
     'health_check.contrib.s3boto3_storage',
+
+    # Cache
+    'store',
 ]
 
 MIDDLEWARE = [
