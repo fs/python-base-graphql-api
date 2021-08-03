@@ -1,3 +1,5 @@
+from server.settings.components import config
+
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
