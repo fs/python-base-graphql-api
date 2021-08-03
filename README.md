@@ -23,7 +23,11 @@ Run server:
 ```shell
 poetry run python manage.py runserver
 ```
-
+## Run tests
+Run test and quality suits to make sure all dependencies are satisfied and applications works correctly before making changes.
+```shell
+python manage.py test
+```
 ## Admin panel
 With superuser credentials you can sign in admin panel `http://localhost:8000/admin/`
 
