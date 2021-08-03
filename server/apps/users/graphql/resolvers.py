@@ -2,7 +2,7 @@ import graphene
 from server.apps.users.graphql.filters import UserActivityFilterSet
 from server.apps.users.graphql.types import UserActivityType, UserType
 from server.core.authentication.jwt.decorators import login_required
-from server.core.graphql.connection_fields import FilterConnectionField
+from server.core.graphql.fields.connection_fields import FilterConnectionField
 
 
 class Query(object):

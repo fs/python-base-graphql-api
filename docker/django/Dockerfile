@@ -1,4 +1,4 @@
-FROM python:3.9.6-slim-buster
+FROM python:3.8.10-slim-buster
 
 ENV  PYTHONFAULTHANDLER=1 \
   PYTHONUNBUFFERED=1 \
@@ -21,8 +21,10 @@ RUN apt-get update \
   # Cleaning cache:
   && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt /app/requirements.txt
-RUN  pip install --no-cache-dir -r /app/requirements.txt
-COPY ../.. /app
-WORKDIR /app
+RUN pip install poetry
+COPY poetry.lock pyproject.toml /code/
+RUN cd code && poetry config virtualenvs.create false && poetry install
+COPY . /code
+WORKDIR /code
+
 

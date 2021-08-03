@@ -27,7 +27,12 @@ poetry run python manage.py runserver
 ## Admin panel
 With superuser credentials you can sign in admin panel `http://localhost:8000/admin/`
 
+## Healthcheck
+For check services (Database, AWS S3, etc.) running status 
+follow to `http://localhost:8000/health/`
+
 ## GraphQL
 
 For testing API you can follow the link `http://localhost:8000/graphql/`
+
 

@@ -3,12 +3,12 @@ from unittest import mock
 
 from django.contrib.auth.models import AnonymousUser
 from django.utils import timezone
-from users.jwt_auth import mixins
-from users.jwt_auth.exceptions import PermissionDenied
-from users.jwt_auth.middleware import TokenAuthenticationMiddleware
-from users.jwt_auth.models import RefreshToken
-from users.jwt_auth.tests.testcases import UserAuthenticatedTestCase
-from users.jwt_auth.utils import jwt_decode
+from server.core.authentication.jwt import mixins
+from server.core.authentication.jwt.exceptions import PermissionDenied
+from server.core.authentication.jwt.middleware import TokenAuthenticationMiddleware
+from server.core.authentication.jwt.models import RefreshToken
+from tests.test_server.test_jwt.testcases import UserAuthenticatedTestCase
+from server.core.authentication.jwt.utils import jwt_decode
 
 
 class MiddlewareSetupMixin:

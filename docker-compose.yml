@@ -8,12 +8,12 @@ services:
         - .env
 
     web:
-      build: .
-      command: python3 manage.py runserver 0.0.0.0:8000
+      build: ./docker/django
+      command: poetry run python3 manage.py runserver 0.0.0.0:8000
       environment:
         - POSTGRES_HOST=db
       volumes:
-        - .:/app
+        - .:/code
       ports:
         - "8000:8000"
       depends_on:
