@@ -2,14 +2,14 @@ import graphene
 
 
 class SignInInput(graphene.InputObjectType):
-    """Signin mutation input."""
+    """Sign in mutation input."""
 
     email = graphene.String(required=True)
     password = graphene.String(required=True)
 
 
 class SignOutInput(graphene.InputObjectType):
-    """Signout mutation input, which revokes all user refresh tokens or current."""
+    """Sign out mutation input, which revokes all user refresh tokens or current."""
 
     everywhere = graphene.Boolean()
 
