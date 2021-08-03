@@ -43,7 +43,7 @@ INSTALLED_APPS: Tuple[str, ...] = (
     'django.contrib.admindocs',
 
     # redis
-    'store',
+    'stopure',
 )
 
 CACHES = {
