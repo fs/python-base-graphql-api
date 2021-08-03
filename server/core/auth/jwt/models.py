@@ -5,8 +5,8 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
-from server.core.authentication import utils as user_utils
-from server.core.authentication.jwt import utils
+from server.core.auth import utils as user_utils
+from server.core.auth.jwt import utils
 from server.core.utils.email import send_recovery_email
 
 jwt_settings = settings.JWT_SETTINGS

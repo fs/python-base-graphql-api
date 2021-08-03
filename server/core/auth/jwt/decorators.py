@@ -2,7 +2,7 @@ from functools import partial, wraps
 
 from django.contrib.auth import get_user_model
 from graphql.execution.execute import GraphQLResolveInfo
-from server.core.authentication.jwt.exceptions import PermissionDenied
+from server.core.auth.jwt.exceptions import PermissionDenied
 
 User = get_user_model()
 

@@ -2,11 +2,11 @@ from typing import Dict, List, NoReturn, Optional, Union
 
 from django.contrib.auth import get_user_model
 from graphene.types import Context
-from server.core.authentication.jwt.exceptions import (
+from server.core.auth.jwt.exceptions import (
     InvalidCredentials,
     ResetTokenInvalid,
 )
-from server.core.authentication.jwt.models import ResetToken
+from server.core.auth.jwt.models import ResetToken
 
 User = get_user_model()
 

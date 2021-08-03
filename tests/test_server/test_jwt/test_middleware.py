@@ -1,13 +1,13 @@
 from unittest import mock
 
 from django.contrib.auth.models import AnonymousUser
-from server.core.authentication.jwt.exceptions import PermissionDenied
-from server.core.authentication.jwt.middleware import TokenAuthenticationMiddleware
+from server.core.auth.jwt.exceptions import PermissionDenied
+from server.core.auth.jwt.middleware import TokenAuthenticationMiddleware
 from tests.test_server.test_jwt.testcases import UserAuthenticatedTestCase
 
 
 class JWTMiddlewareTest(UserAuthenticatedTestCase):
-    """Testing authentication middleware."""
+    """Testing auth middleware."""
 
     def setUp(self):
         """Setup middleware."""

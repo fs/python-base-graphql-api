@@ -21,14 +21,12 @@ INSTALLED_APPS = [
     'django_filters',
 
     # Apps
-    'server.core.authentication.jwt',
+    'server.core.auth.jwt',
     'server.apps.users',
 
     # Health check
     'health_check',
     'health_check.db',
-    'health_check.storage',
-    'health_check.contrib.s3boto3_storage',
 ]
 
 MIDDLEWARE = [
@@ -79,7 +77,7 @@ DATABASES = {
 AUTH_USER_MODEL = 'users.User'
 
 AUTHENTICATION_BACKENDS = [
-    'server.core.authentication.jwt.backends.JSONWebTokenBackend',
+    'server.core.auth.jwt.backends.JSONWebTokenBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
 

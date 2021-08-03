@@ -3,19 +3,19 @@ from unittest import mock
 
 from django.contrib.auth.models import AnonymousUser
 from django.utils import timezone
-from server.core.authentication.jwt import mixins
-from server.core.authentication.jwt.exceptions import PermissionDenied
-from server.core.authentication.jwt.middleware import TokenAuthenticationMiddleware
-from server.core.authentication.jwt.models import RefreshToken
+from server.core.auth.jwt import mixins
+from server.core.auth.jwt.exceptions import PermissionDenied
+from server.core.auth.jwt.middleware import TokenAuthenticationMiddleware
+from server.core.auth.jwt.models import RefreshToken
 from tests.test_server.test_jwt.testcases import UserAuthenticatedTestCase
-from server.core.authentication.jwt.utils import jwt_decode
+from server.core.auth.jwt.utils import jwt_decode
 
 
 class MiddlewareSetupMixin:
     """Mixin for middleware setup."""
 
     def setUp(self):
-        """Setup authentication middleware resolver."""
+        """Setup auth middleware resolver."""
         super().setUp()
         self.middleware_resolver = TokenAuthenticationMiddleware().resolve
 

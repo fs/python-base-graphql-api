@@ -1,7 +1,7 @@
 from calendar import timegm
 from datetime import datetime
 
-from server.core.authentication.jwt.utils import generate_hash
+from server.core.auth.jwt.utils import generate_hash
 
 
 def generate_hash_for_user(user, created_at: datetime) -> str:

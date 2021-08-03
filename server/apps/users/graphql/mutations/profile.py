@@ -3,8 +3,8 @@ from server.apps.users import mixins as users_mixins
 from server.apps.users.graphql import inputs, outputs
 from server.apps.users.models import UserActivity
 from server.apps.users.signals import user_activity_signal
-from server.core.authentication.jwt import mixins as jwt_mixins
-from server.core.authentication.jwt.decorators import login_required
+from server.core.auth.jwt import mixins as jwt_mixins
+from server.core.auth.jwt.decorators import login_required
 
 
 class UpdateUser(users_mixins.UpdateUserMixin, graphene.Mutation):
