@@ -13,5 +13,3 @@ JWT_SETTINGS = {
     'JWT_VERIFY_EXPIRATION': True,
     'JWT_VERIFY': True,
 }
-
-PASS_RESET_TOKEN_EXPIRATION_DELTA = timedelta(days=1)

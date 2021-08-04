@@ -1,7 +1,10 @@
-from server.settings.components.common import INSTALLED_APPS, TIME_ZONE
+from server.settings.components.common import INSTALLED_APPS, TIME_ZONE, config
 
-CELERY_BROKER_URL = 'redis://localhost:6379/1'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+REDIS_HOST = config('REDIS_HOST')
+REDIS_PORT = config('REDIS_PORT')
+
+CELERY_BROKER_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}'
+CELERY_RESULT_BACKEND = f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
 CELERY_TIMEZONE = TIME_ZONE
 
 INSTALLED_APPS += (

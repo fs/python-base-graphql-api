@@ -3,7 +3,8 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.utils import timezone
-from server.core.auth.jwt.models import RefreshToken, ResetToken
+from server.apps.users.models import ResetToken
+from server.core.auth.jwt.models import RefreshToken
 from tests.test_server.test_jwt.testcases import UserAuthenticatedTestCase
 
 jwt_settings = settings.JWT_SETTINGS
@@ -100,7 +101,18 @@ class ResetTokenTest(UserAuthenticatedTestCase):
 
     def test_is_expired(self):
         """Test reset token expires."""
-        settings.PASS_RESET_TOKEN_EXPIRATION_DELTA = timedelta(seconds=1)
-        reset_token = self.model.objects.create(user=self.user)
-        time.sleep(1)
-        self.assertTrue(reset_token.is_expired)
+        with self.settings(PASS_RESET_TOKEN_EXPIRATION_DELTA=timedelta(seconds=-1)):
+            reset_token = self.model.objects.create(user=self.user)
+            self.assertTrue(reset_token.is_expired)
+
+    def test_is_active_with_expired(self):
+        """Test is_active with expired case."""
+        self.assertTrue(self.instance.is_active)
+        with self.settings(PASS_RESET_TOKEN_EXPIRATION_DELTA=timedelta(seconds=-1)):
+            self.assertFalse(self.instance.is_active)
+
+    def test_is_active_with_used_token(self):
+        """Test is_active with used reset token case."""
+        self.assertTrue(self.instance.is_active)
+        self.instance.set_password('test')
+        self.assertFalse(self.instance.is_active)

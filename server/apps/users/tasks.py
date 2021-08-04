@@ -1,5 +1,5 @@
 from celery import shared_task
-from server.core.auth.jwt.models import ResetToken
+from server.apps.users.models import ResetToken
 
 
 @shared_task(ignore_result=True)

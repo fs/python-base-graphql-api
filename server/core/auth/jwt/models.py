@@ -7,7 +7,6 @@ from django.db import models
 from django.utils import timezone
 from server.core.auth import utils as user_utils
 from server.core.auth.jwt import utils
-from server.core.utils.email import send_recovery_email
 
 jwt_settings = settings.JWT_SETTINGS
 User = get_user_model()
@@ -92,65 +91,3 @@ class RefreshToken(models.Model):  # noqa: D101
         """Revoke refresh token."""
         self.revoked_at = timezone.now()
         self.save()
-
-
-class ResetTokenQuerySet(models.QuerySet):
-    """Reset token QuerySet."""
-
-    def get_active_token(self, token: str):
-        """Get active token."""
-        expires_at_by_now = timezone.now() - jwt_settings.PASS_RESET_TOKEN_EXPIRATION_DELTA
-        return self.get(created_at__gt=expires_at_by_now, token=token)
-
-
-ResetTokenManager = models.Manager.from_queryset(ResetTokenQuerySet)
-
-
-class ResetToken(models.Model):  # noqa: D101
-    token = models.CharField(max_length=255, editable=False)
-    is_used = models.BooleanField(default=False)
-    created_at = models.DateTimeField()
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='reset_tokens')
-
-    objects = ResetTokenManager()
-
-    class Meta:
-        verbose_name = 'Reset token'
-        verbose_name_plural = 'Reset tokens'
-
-    def __str__(self):
-        return self.token
-
-    def save(self, *args, **kwargs):
-        """created_at and token generation."""
-        if not self.created_at:
-            self.created_at = timezone.now()
-
-        if not self.token:
-            self.token = user_utils.generate_hash_for_user(self.user, self.created_at)
-
-        return super().save(*args, **kwargs)
-
-    @property
-    def is_expired(self) -> bool:
-        """Check token is expired."""
-        return timezone.now() > (self.created_at + settings.PASS_RESET_TOKEN_EXPIRATION_DELTA)
-
-    @property
-    def is_active(self) -> bool:
-        """Check token is not expired and not used."""
-        return self.is_expired and not self.is_used
-
-    def set_password(self, password):
-        """Password setting for user."""
-        self.is_used = True
-        self.user.set_password(password)
-
-    def send_recovery_mail(self):
-        """Send email to user with instructions."""
-        send_recovery_email(
-            self.user.first_name,
-            self.user.last_name,
-            self.token,
-            self.user.email,
-        )
