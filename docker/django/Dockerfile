@@ -3,6 +3,9 @@ FROM python:3.8.10-slim-buster
 ENV  PYTHONFAULTHANDLER=1 \
   PYTHONUNBUFFERED=1 \
   PYTHONHASHSEED=random \
+  # pip:
+  PIP_NO_CACHE_DIR=off \
+  PIP_DISABLE_PIP_VERSION_CHECK=on \
   # poetry:
   PATH=/root/.local/bin:$PATH
 
