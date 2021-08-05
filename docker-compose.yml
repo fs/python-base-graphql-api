@@ -5,17 +5,18 @@ services:
     db:
       image: postgres:12-alpine
       env_file:
-        - .env
+        - config/.env
 
     web:
-      build: ./docker/django
+      build:
+        context: .
+        dockerfile: docker/django/Dockerfile
       command: poetry run python3 manage.py runserver 0.0.0.0:8000
       environment:
         - POSTGRES_HOST=db
-      volumes:
-        - .:/code
+#      volumes:
+#        - .:/code
       ports:
         - "8000:8000"
       depends_on:
         - db
-
