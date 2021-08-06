@@ -18,5 +18,5 @@ class UserAlreadyJoined(UserProfileException):
 
 
 class ValidationError(UserProfileException):
-
+    """Validation error for fields"""
     default_message = 'Validation error'
