@@ -1,28 +1,26 @@
-from django.test import TestCase
-import unittest
+from tests.test_apps.test_users.utils.testcases import UserCreatedTestCase
 from server.apps.users.models import UserManager, User, UserActivity
 from server.apps.users.exceptions import UserAlreadyJoined
 
 
-class UserManagerTest(TestCase):
+class UserManagerTest(UserCreatedTestCase):
     """Test UserManager model."""
 
     def setUp(self):
         """Setup model and instance of model."""
+        super().setUp()
         self.user_manager = UserManager()
 
     def test_create_user_without_email(self):
-        try:
-            self.user_manager.create_user(email=None, password=None)
-        except ValueError as ex:
-            self.assertRaisesMessage(ex, 'The given email must be set')
+        """Test user creation without email."""
+        with self.assertRaises(Exception):
+            self.user_manager.create_user(email=None)
 
-    @unittest.expectedFailure
-    def test_create_user(self):
-        try:
-            self.user_manager.create_user(email="test1@test.com",password="test")
-        except Exception as ex:
-            self.assertRaisesMessage(ex, UserAlreadyJoined())
+    def test_create_existing_user(self):
+        """Test existing user creation."""
+        with self.astestssertRaises(UserAlreadyJoined):
+            self.user_manager.create_user(email=getattr(self.user, 'email'))
+
 
 
 

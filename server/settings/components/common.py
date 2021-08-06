@@ -79,8 +79,8 @@ DATABASES = {
 AUTH_USER_MODEL = 'users.User'
 
 AUTHENTICATION_BACKENDS = [
-    'server.core.authentication.jwt.backends.JSONWebTokenBackend',
     'django.contrib.auth.backends.ModelBackend',
+    'server.core.authentication.jwt.backends.JSONWebTokenBackend',
 ]
 
 AUTH_PASSWORD_VALIDATORS = [
