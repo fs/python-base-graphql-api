@@ -20,8 +20,3 @@ class UserManagerTest(UserCreatedTestCase):
         """Test existing user creation."""
         with self.astestssertRaises(UserAlreadyJoined):
             self.user_manager.create_user(email=getattr(self.user, 'email'))
-
-
-
-
-
