@@ -4,3 +4,5 @@ services:
 
     web:
       image: ${IMAGE_NAME}
+      env_file:
+        - "config/.env"
