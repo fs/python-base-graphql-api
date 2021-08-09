@@ -43,7 +43,6 @@ blocks:
       jobs:
         - name: Run CI
           commands:
-            - echo "IMAGE_NAME=${IMAGE_NAME}"
             - make ci
 promotions:
   - name: Deploy to Heroku

@@ -4,7 +4,7 @@ env-file:
 	env > .env
 
 build:
-	sudo docker-compose up -d
+	sudo docker-compose --env-file config/.env up -d
 
 lint:
 	sudo docker exec -t python-base-graphql-api_web_1 poetry run flake8 server/apps/users
