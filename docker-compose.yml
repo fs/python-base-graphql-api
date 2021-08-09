@@ -5,7 +5,7 @@ services:
     db:
       image: postgres:12-alpine
       env_file:
-        - ./config/.env
+        - "config/.env"
 
     web:
       build:

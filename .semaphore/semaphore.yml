@@ -19,7 +19,6 @@ global_job_config:
   prologue:
     commands:
       - export DOCKER_REPO="docker.pkg.github.com/fs/python-base-graphql-api"
-      - export COMPOSE_FILE="~/python-base-graphql-api/config/.env"
       - 'export IMAGE_NAME="${DOCKER_REPO}/final:${SEMAPHORE_GIT_BRANCH}"'
       - 'echo "${DOCKER_PASSWORD}" | docker login https://docker.pkg.github.com -u "${DOCKER_USERNAME}" --password-stdin'
       - checkout
@@ -29,6 +28,7 @@ blocks:
       jobs:
         - name: Docker build
           commands:
+            - 'echo ${IMAGE_NAME}'
             - 'docker pull "${IMAGE_NAME}" || true'
             - 'docker build -t "${IMAGE_NAME}" --cache-from="${IMAGE_NAME}" -f ./docker/django/Dockerfile .'
             - 'docker push "${IMAGE_NAME}"'
