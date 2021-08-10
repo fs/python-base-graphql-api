@@ -1,75 +1,75 @@
-import graphene
+import strawberry
 
 
-class SignInInput(graphene.InputObjectType):
+@strawberry.input
+class SignInInput:
     """Signin mutation input."""
 
-    email = graphene.String(required=True)
-    password = graphene.String(required=True)
+    email:  str
+    password: str
 
-
-class SignOutInput(graphene.InputObjectType):
+@strawberry.input
+class SignOutInput:
     """Signout mutation input, which revokes all user refresh tokens or current."""
 
-    everywhere = graphene.Boolean()
+    everywhere: bool
 
-
-class SignUpInput(graphene.InputObjectType):
+@strawberry.input
+class SignUpInput:
     """Signup mutation input."""
 
-    email = graphene.String()
-    first_name = graphene.String(name='firstName')
-    last_name = graphene.String(name='lastName')
-    password = graphene.String()
+    email: str
+    first_name: str
+    last_name: str
+    password: str
 
-
-class ImageUploaderMetadata(graphene.InputObjectType):
+@strawberry.input
+class ImageUploaderMetadata:
     """AWS image metadata after direct uploading."""
 
-    size = graphene.Int(required=True)
-    filename = graphene.String(required=True)
-    mime_type = graphene.String(required=True, name='mimeType')
+    size: int
+    filename: str
+    mime_type: str
 
-
-class ImageUploader(graphene.InputObjectType):
+class ImageUploader:
     """AWS image data after direct uploading."""
 
-    id = graphene.String(required=True)
-    storage = graphene.String()
-    metadata = graphene.Field(ImageUploaderMetadata)
+    id: str
+    storage: str
+    metadata: ImageUploaderMetadata
 
 
-class UpdateUserInput(SignUpInput):
+class UpdateUserInput:
     """Updating user input fields with AWS image uploading."""
 
-    current_password = graphene.String(name='currentPassword')
-    avatar = graphene.Field(ImageUploader)
+    current_password: str
+    avatar: ImageUploader
 
 
-class PresignAWSImageUploadInput(graphene.InputObjectType):
+class PresignAWSImageUploadInput:
     """AWS image info for direct upload headers generation."""
 
-    filename = graphene.String(required=True)
-    file_type = graphene.String(required=True, name='type')
+    filename: str
+    file_type: str
 
     class Meta:
         name = 'PresignDataInput'
 
 
-class PasswordRecoveryInput(graphene.InputObjectType):
+class PasswordRecoveryInput:
     """Input for user recovery request with email to which the recovery url will be sent."""
 
-    email = graphene.String(required=True)
+    email: str
 
     class Meta:
         name = 'RequestPasswordRecoveryInput'
 
 
-class UpdatePasswordInput(graphene.InputObjectType):
+class UpdatePasswordInput:
     """Input for password updating by reset token."""
 
-    password = graphene.String(required=True)
-    reset_token = graphene.String(required=True, name='resetToken')
+    password: str
+    reset_token: str
 
     class Meta:
         name = 'UpdatePasswordInput'

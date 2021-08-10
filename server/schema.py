@@ -2,25 +2,22 @@ import graphene
 import server.apps.users.graphql.mutations
 import server.apps.users.graphql.mutations.mutation
 import server.apps.users.graphql.resolvers
-from graphene_django.debug import DjangoDebug
+import strawberry
 
 
+@strawberry.type
 class Query(
     graphene.ObjectType,
     server.apps.users.graphql.resolvers.Query,
 ):
     """Main query for schema."""
 
-    debug = graphene.Field(DjangoDebug, name='_debug')
 
-
+@strawberry.type
 class Mutation(
     graphene.ObjectType,
     server.apps.users.graphql.mutations.mutation.Mutation,
 ):
     """Main mutation for schema."""
 
-    debug = graphene.Field(DjangoDebug, name='_debug')
-
-
-schema = graphene.Schema(query=Query, mutation=Mutation)
+schema = strawberry.Schema(query=Query, mutation=Mutation)

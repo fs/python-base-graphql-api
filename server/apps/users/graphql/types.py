@@ -1,48 +1,51 @@
-import graphene
 from django.contrib.auth import get_user_model
-from graphene_django import DjangoObjectType
 from server.apps.users.models import UserActivity
 from server.core.authentication.jwt.decorators import login_required
-
+import strawberry
+from strawberry.django import auto
 User = get_user_model()
 
 
-class UserType(DjangoObjectType):
+@strawberry.django.type
+class UserType:
     """GraphQL type based on user model."""
-
-    avatar = graphene.String(name='avatarUrl')
-    last_name = graphene.String(name='lastName')
-    first_name = graphene.String(name='firstName')
+    id: auto
+    avatar: auto
+    last_name: auto
+    first_name: auto
 
     class Meta:
         model = User
         name = 'User'
         fields = ('id', 'email')
-        interfaces = (graphene.relay.Node, )
 
+    @strawberry.field
     def resolve_avatar(self, _):
         """User avatar url resolving."""
         return self.avatar.url if self.avatar else None
 
 
-class UserActivityType(DjangoObjectType):
+@strawberry.django.type
+class UserActivityType:
     """GraphQL type based on UserActivity model."""
 
-    title = graphene.String()
-    created_at = graphene.String(name='createdAt')
-    body = graphene.String()
-    user = graphene.Field(UserType)
+    id: auto
+    title: auto
+    created_at: auto
+    body: auto
+    user: UserType
 
     class Meta:
         model = UserActivity
         name = 'Activity'
         fields = ('id', 'event')
-        interfaces = (graphene.relay.Node, )
 
+    @strawberry.field
     def resolve_title(self, _):
         """Resolve event choices display name."""
         return self.get_event_display()
 
+    @strawberry.field
     # TODO: make body
     def resolve_body(self, info):
         """Resolve event description."""
@@ -50,6 +53,7 @@ class UserActivityType(DjangoObjectType):
 
     @classmethod
     @login_required
+    @strawberry.field
     def get_queryset(cls, queryset, info):
         """Method for wrap user activity data in login_required decorator."""
         return queryset

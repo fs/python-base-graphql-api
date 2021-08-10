@@ -15,12 +15,14 @@ from django.urls import include, path, re_path
 from django.views.decorators.csrf import csrf_exempt
 from graphene_django.views import GraphQLView
 from health_check import urls as health_urls
+from server.schema import schema
+from strawberry.django.views import GraphQLView
 
 admin.autodiscover()
 
 urlpatterns = [
     # Apps:
-    re_path('graphql', csrf_exempt(GraphQLView.as_view(graphiql=True))),
+    re_path('graphql', GraphQLView.as_view(schema=schema)),
 
     # Health checks:
     path('health/', include(health_urls)),  # noqa: DJ05
