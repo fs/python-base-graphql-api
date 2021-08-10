@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from .utils.testcases import QueryTest
 from .utils import requests
-from server.core.authentication.jwt.exceptions import InvalidCredentials
+from server.core.auth.jwt.exceptions import InvalidCredentials
 from server.apps.users.exceptions import UserAlreadyJoined
 from hypothesis import example, settings, given, strategies as st
 

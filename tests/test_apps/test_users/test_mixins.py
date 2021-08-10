@@ -1,6 +1,6 @@
 from tests.test_apps.test_users.utils.testcases import UserCreatedTestCase
 from server.apps.users.mixins import (UpdateUserMixin)
-from server.core.authentication.jwt.exceptions import InvalidCredentials
+from server.core.auth.jwt.exceptions import InvalidCredentials
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
