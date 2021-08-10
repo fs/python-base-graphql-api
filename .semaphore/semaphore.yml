@@ -14,7 +14,7 @@ fail_fast:
     when: 'true'
 global_job_config:
   secrets:
-    - name: github-docker-secrets
+    - name: python-github-registry-secrets
     - name: python-base-secrets
   prologue:
     commands:
