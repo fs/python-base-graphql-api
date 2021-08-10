@@ -5,14 +5,16 @@ import strawberry
 class SignInInput:
     """Signin mutation input."""
 
-    email:  str
+    email: str
     password: str
+
 
 @strawberry.input
 class SignOutInput:
     """Signout mutation input, which revokes all user refresh tokens or current."""
 
     everywhere: bool
+
 
 @strawberry.input
 class SignUpInput:
@@ -23,6 +25,7 @@ class SignUpInput:
     last_name: str
     password: str
 
+
 @strawberry.input
 class ImageUploaderMetadata:
     """AWS image metadata after direct uploading."""
@@ -31,6 +34,8 @@ class ImageUploaderMetadata:
     filename: str
     mime_type: str
 
+
+@strawberry.input
 class ImageUploader:
     """AWS image data after direct uploading."""
 
@@ -39,6 +44,7 @@ class ImageUploader:
     metadata: ImageUploaderMetadata
 
 
+@strawberry.input
 class UpdateUserInput:
     """Updating user input fields with AWS image uploading."""
 
@@ -46,6 +52,7 @@ class UpdateUserInput:
     avatar: ImageUploader
 
 
+@strawberry.input
 class PresignAWSImageUploadInput:
     """AWS image info for direct upload headers generation."""
 
@@ -56,6 +63,7 @@ class PresignAWSImageUploadInput:
         name = 'PresignDataInput'
 
 
+@strawberry.input
 class PasswordRecoveryInput:
     """Input for user recovery request with email to which the recovery url will be sent."""
 
@@ -65,6 +73,7 @@ class PasswordRecoveryInput:
         name = 'RequestPasswordRecoveryInput'
 
 
+@strawberry.input
 class UpdatePasswordInput:
     """Input for password updating by reset token."""
 
