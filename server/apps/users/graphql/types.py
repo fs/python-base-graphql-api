@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from server.apps.users.models import UserActivity
 from server.core.auth.jwt.decorators import login_required
 from strawberry.django import auto
+from django.db.models import QuerySet
 
 User = get_user_model()
 
@@ -56,6 +57,6 @@ class UserActivityType:
     @classmethod
     @login_required
     @strawberry.field
-    def get_queryset(cls, queryset, info):
+    def get_queryset(cls, queryset: QuerySet, info) -> QuerySet:
         """Method for wrap user activity data in login_required decorator."""
         return queryset
