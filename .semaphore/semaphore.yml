@@ -28,7 +28,8 @@ blocks:
       jobs:
         - name: Docker build
           commands:
-            - 'echo ${IMAGE_NAME}'
+            - 'echo "IMAGE_NAME=${IMAGE_NAME}" >> ~/.env'
+            - 'cp ~/.env ~/python-base-graphql-api/config/.env'
             - 'docker pull "${IMAGE_NAME}" || true'
             - 'docker build -t "${IMAGE_NAME}" --cache-from="${IMAGE_NAME}" -f ./docker/django/Dockerfile .'
             - 'docker push "${IMAGE_NAME}"'
@@ -36,12 +37,8 @@ blocks:
     task:
       prologue:
         commands:
-          - echo "IMAGE_NAME=${IMAGE_NAME}" >> ~/.env
-          - cp ~/.env ~/python-base-graphql-api/config/.env
-          - cat ~/python-base-graphql-api/config/.env
-          - echo "${DOCKER_PASSWORD}:${DOCKER_USERNAME}"
           - 'docker pull "${IMAGE_NAME}"'
-          - cp docker-compose.semaphore.yml docker-compose.override.yml
+          - 'cp docker-compose.semaphore.yml docker-compose.override.yml'
       jobs:
         - name: Run CI
           commands:
