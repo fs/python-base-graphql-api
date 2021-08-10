@@ -15,3 +15,9 @@ class UserAlreadyJoined(UserProfileException):
     """Raises when user already joined with that username."""
 
     default_message = 'User already joined'
+
+
+class ValidationError(UserProfileException):
+    """Validation error for fields."""
+
+    default_message = 'Validation error'

@@ -1,5 +1,5 @@
-from pathlib import Path
 from datetime import timedelta
+from pathlib import Path
 
 from server.settings.components import config
 
@@ -79,8 +79,8 @@ AUTH_USER_MODEL = 'users.User'
 PASS_RESET_TOKEN_EXPIRATION_DELTA = timedelta(days=1)
 
 AUTHENTICATION_BACKENDS = [
-    'server.core.auth.jwt.backends.JSONWebTokenBackend',
     'django.contrib.auth.backends.ModelBackend',
+    'server.core.auth.jwt.backends.JSONWebTokenBackend',
 ]
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -130,4 +130,3 @@ EMAIL_USE_TLS = config('EMAIL_USE_TLS')
 EMAIL_PORT = config('EMAIL_PORT')
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-
