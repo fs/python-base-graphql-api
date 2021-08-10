@@ -1,13 +1,13 @@
 from django.conf import settings
-from server.core.authentication.jwt import backends
-from server.core.authentication.jwt.exceptions import PermissionDenied
+from server.core.auth.jwt import backends
+from server.core.auth.jwt.exceptions import PermissionDenied
 from tests.test_server.test_jwt.testcases import UserAuthenticatedTestCase
 
 jwt_settings = settings.JWT_SETTINGS
 
 
 def get_auth_headers(access_token):
-    """Making authentication headers for request."""
+    """Making auth headers for request."""
     access_token_header = jwt_settings.get('JWT_AUTH_HEADER_NAME')
     access_token_prefix = jwt_settings.get('JWT_AUTH_HEADER_PREFIX')
     return {
@@ -16,7 +16,7 @@ def get_auth_headers(access_token):
 
 
 class BackendTest(UserAuthenticatedTestCase):
-    """Backend authentication test cases."""
+    """Backend auth test cases."""
 
     def setUp(self):
         """Setup backend."""
@@ -38,7 +38,7 @@ class BackendTest(UserAuthenticatedTestCase):
         self.assertIsNone(user)
 
     def test_authenticate_invalid(self):
-        """Test invalid access token authentication."""
+        """Test invalid access token auth."""
         request = self.get_authenticated_info_context(access_token='INVALID_ACCESS_TOKEN').context
         with self.assertRaises(PermissionDenied):
             self.backend.authenticate(request)

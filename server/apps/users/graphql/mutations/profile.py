@@ -3,8 +3,8 @@ from server.apps.users import mixins as users_mixins
 from server.apps.users.graphql import inputs, outputs
 from server.apps.users.models import UserActivity
 from server.apps.users.signals import user_activity_signal
-from server.core.authentication.jwt import mixins as jwt_mixins
-from server.core.authentication.jwt.decorators import login_required
+from server.core.auth.jwt import mixins as jwt_mixins
+from server.core.auth.jwt.decorators import login_required
 
 
 class UpdateUser(users_mixins.UpdateUserMixin, graphene.Mutation):
@@ -53,9 +53,9 @@ class RequestPasswordRecovery(users_mixins.PasswordRecoveryMixin, graphene.Mutat
     @classmethod
     def mutate(cls, _, info, input_):
         email = input_.get('email')
-        user = cls.recovery(email)
-        if user is not None:
-            user_activity_signal.send(cls, user=user, activity=UserActivity.RESET_PASSWORD_REQUESTED)
+        reset_token = cls.recovery(email)
+        if reset_token is not None:
+            user_activity_signal.send(cls, user=reset_token.user, activity=UserActivity.RESET_PASSWORD_REQUESTED)
 
         return cls.Output()
 

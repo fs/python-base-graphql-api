@@ -2,11 +2,12 @@ from typing import Dict, List, NoReturn, Optional, Union
 
 from django.contrib.auth import get_user_model
 from graphene.types import Context
-from server.core.authentication.jwt.exceptions import (
+from server.apps.users.models import ResetToken
+from server.apps.users.tasks import send_recovery_email
+from server.core.auth.jwt.exceptions import (
     InvalidCredentials,
     ResetTokenInvalid,
 )
-from server.core.authentication.jwt.models import ResetToken
 
 User = get_user_model()
 
@@ -73,8 +74,8 @@ class PasswordRecoveryMixin:
 
         if user.exists():
             reset_token = ResetToken.objects.create(user=user[0])
-            reset_token.send_recovery_mail()
-            return user[0]
+            send_recovery_email.delay(reset_token_pk=reset_token.pk)
+            return reset_token
         return None
 
 

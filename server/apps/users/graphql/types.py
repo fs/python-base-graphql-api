@@ -2,7 +2,7 @@ import graphene
 from django.contrib.auth import get_user_model
 from graphene_django import DjangoObjectType
 from server.apps.users.models import UserActivity
-from server.core.authentication.jwt.decorators import login_required
+from server.core.auth.jwt.decorators import login_required
 
 User = get_user_model()
 

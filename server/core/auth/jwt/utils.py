@@ -1,7 +1,7 @@
 import hashlib
 from calendar import timegm
 from datetime import datetime
-from typing import Dict, Literal, Optional, Union
+from typing import Dict, Literal, Union
 
 import jwt
 from django.conf import settings
@@ -65,11 +65,6 @@ def get_access_payload_by_request(request: Context) -> Dict[str, Union[str, int]
         return jwt_decode(access_token)
     except jwt.exceptions.DecodeError:
         return None
-
-
-def get_refresh_token_by_request(request: Context) -> Optional[str]:
-    """Get refresh token from request cookies."""
-    return request.COOKIES.get(jwt_settings.get('JWT_REFRESH_TOKEN_COOKIE_NAME'))
 
 
 def generate_hash(string: str) -> str:

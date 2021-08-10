@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from django.utils import timezone
-from server.core.authentication.jwt import utils
+from server.core.auth.jwt import utils
 from tests.test_server.test_jwt import testcases
 
 

@@ -9,19 +9,32 @@ Install dependencies:
 poetry install
 ```
 
+Activate virtual environment:
+```shell
+poetry shell
+```
+
 Make database migrations:
 ```shell
-poetry run python manage.py migrate
+python manage.py migrate
 ```
 
 Create superuser for admin panel access:
 ```shell
-poetry run python manage.py createsuperuser
+python manage.py createsuperuser
 ```
+
+Run celery task queue:
+```shell
+celery -A server worker -l DEBUG -P gevent  # For windows
+
+celery -A server worker -l DEBUG  # For MacOS\Linux
+```
+
 
 Run server:
 ```shell
-poetry run python manage.py runserver
+python manage.py runserver
 ```
 ## Run tests
 Run test and quality suits to make sure all dependencies are satisfied and applications works correctly before making changes.
