@@ -1,9 +1,9 @@
 import strawberry
+from django.db.models import QuerySet
 from django.contrib.auth import get_user_model
 from server.apps.users.models import UserActivity
 from server.core.auth.jwt.decorators import login_required
 from strawberry.django import auto
-from django.db.models import QuerySet
 
 User = get_user_model()
 
