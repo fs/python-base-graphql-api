@@ -5,6 +5,6 @@ GRAPHENE = {
     'SCHEMA': 'server.schema.schema',
     'MIDDLEWARE': [
         'graphene_django.debug.DjangoDebugMiddleware',
-        'server.core.authentication.jwt.middleware.TokenAuthenticationMiddleware',
+        'server.core.auth.jwt.middleware.TokenAuthenticationMiddleware',
     ],
 }

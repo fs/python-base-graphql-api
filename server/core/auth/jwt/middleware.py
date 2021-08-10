@@ -5,8 +5,8 @@ from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.utils.functional import SimpleLazyObject
 from graphene.types import Context
-from server.core.authentication.jwt import utils
-from server.core.authentication.jwt.models import RefreshToken
+from server.core.auth.jwt import utils
+from server.core.auth.jwt.models import RefreshToken
 
 jwt_settings = settings.JWT_SETTINGS
 User = get_user_model()

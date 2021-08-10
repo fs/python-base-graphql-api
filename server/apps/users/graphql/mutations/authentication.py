@@ -3,9 +3,9 @@ from django.contrib.auth import authenticate, get_user_model
 from server.apps.users.graphql import inputs, outputs
 from server.apps.users.models import UserActivity
 from server.apps.users.signals import user_activity_signal
-from server.core.authentication.jwt import mixins
-from server.core.authentication.jwt.decorators import login_required
-from server.core.authentication.jwt.exceptions import InvalidCredentials
+from server.core.auth.jwt import mixins
+from server.core.auth.jwt.decorators import login_required
+from server.core.auth.jwt.exceptions import InvalidCredentials
 
 User = get_user_model()
 

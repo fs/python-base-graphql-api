@@ -28,6 +28,7 @@ _base_settings = (
     'components/graphene.py',
     'components/aws_storage.py',
     'components/jwt_authentication.py',
+    'components/celery.py',
 
     # Select the right env:
     'environments/{0}.py'.format(_ENV),

@@ -3,9 +3,9 @@ from typing import Dict, NoReturn, Optional
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from graphene.types import Context
-from server.core.authentication.jwt.exceptions import PermissionDenied
-from server.core.authentication.jwt.models import RefreshToken
-from server.core.authentication.jwt.utils import jwt_encode
+from server.core.auth.jwt.exceptions import PermissionDenied
+from server.core.auth.jwt.models import RefreshToken
+from server.core.auth.jwt.utils import jwt_encode
 
 jwt_settings = settings.JWT_SETTINGS
 User = get_user_model()
