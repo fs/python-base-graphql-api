@@ -22,7 +22,7 @@ class UserType:
         fields = ('id', 'email')
 
     @strawberry.field
-    def resolve_avatar(self, _):
+    def resolve_avatar(self):
         """User avatar url resolving."""
         return self.avatar.url if self.avatar else None
 
@@ -43,7 +43,7 @@ class UserActivityType:
         fields = ('id', 'event')
 
     @strawberry.field
-    def resolve_title(self, _):
+    def resolve_title(self):
         """Resolve event choices display name."""
         return self.get_event_display()
 

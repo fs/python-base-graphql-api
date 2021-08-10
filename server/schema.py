@@ -20,4 +20,5 @@ class Mutation(
 ):
     """Main mutation for schema."""
 
+
 schema = strawberry.Schema(query=Query, mutation=Mutation)
