@@ -1,5 +1,5 @@
 from django.utils import timezone
-from server.core.authentication.jwt.utils import generate_hash
+from server.core.auth.jwt.utils import generate_hash
 from storages.backends.s3boto3 import S3Boto3Storage
 from storages.utils import safe_join
 

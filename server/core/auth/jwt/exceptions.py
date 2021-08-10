@@ -15,7 +15,7 @@ class BaseError(Exception):
 
 
 class JSONWebTokenError(BaseError):
-    """Raises in JWT authentication module."""
+    """Raises in JWT auth module."""
 
 
 class PermissionDenied(JSONWebTokenError):
