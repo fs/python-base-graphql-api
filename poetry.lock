@@ -1447,7 +1447,7 @@ flake8-polyfill = ">=1.0.2,<2"
 name = "pexpect"
 version = "4.8.0"
 description = "Pexpect allows easy control of interactive console applications."
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -1534,7 +1534,7 @@ python-versions = ">=3.6"
 name = "ptyprocess"
 version = "0.7.0"
 description = "Run a subprocess in a pseudo terminal"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -2171,7 +2171,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = "3.8.10"
-content-hash = "4a56c849a123b5fc0a31c030ce749c7d32a2a467eb406336c78e28c5bacd6083"
+content-hash = "680e22079bbe3598be428a58e88c1310a6105788ce00509ce202a1127082b781"
 
 [metadata.files]
 alabaster = [
