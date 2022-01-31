@@ -1,5 +1,6 @@
 
-from server.settings.environments.development import *  # noqa: F403, WPS347
+from server.settings.components.common import INSTALLED_APPS
+
 
 DEBUG = True
 

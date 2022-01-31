@@ -31,7 +31,7 @@ RUN poetry config virtualenvs.create false
 
 WORKDIR /code
 
-RUN poetry update && poetry install
+RUN poetry install
 
 COPY . /code
 
