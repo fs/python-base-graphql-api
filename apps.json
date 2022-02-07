@@ -2,7 +2,7 @@
     "name": "python_base_graphql_api",
     "env": {
       "SECRET_KEY": {
-        "required": true
+        "generator": "secret"
       }
     },
     "formation": {
