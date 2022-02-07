@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Dict, NoReturn, Union
 
 from django.conf import settings
@@ -42,7 +42,15 @@ class RefreshToken(models.Model):  # noqa: D101
     jti = models.CharField(max_length=255, editable=False)
     token = models.CharField(max_length=255, editable=False)
     created_at = models.DateTimeField()
+    expires_at = models.DateTimeField()
     revoked_at = models.DateTimeField(null=True, blank=True)
+    parent_token = models.OneToOneField(
+        'RefreshToken',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name='substitution_token',
+    )
 
     objects = RefreshTokenManager()
 
@@ -56,8 +64,12 @@ class RefreshToken(models.Model):  # noqa: D101
 
     def save(self, *args, **kwargs):
         """Fields generation in save time."""
+
         if not self.created_at:
             self.created_at = timezone.now()
+
+        if not self.expires_at:
+            self.expires_at = self.created_at + jwt_settings.get('REFRESH_TOKEN_EXPIRATION_DELTA')
 
         if not self.jti:
             self.jti = user_utils.generate_hash_for_user(self.user, self.created_at)
@@ -90,4 +102,9 @@ class RefreshToken(models.Model):  # noqa: D101
     def revoke(self) -> NoReturn:
         """Revoke refresh token."""
         self.revoked_at = timezone.now()
+        self.save()
+
+    def prolong_grace_period(self) -> NoReturn:
+        """Prolong token grace period."""
+        self.expires_at = timezone.now() + jwt_settings.get('TOKEN_GRACE_PERIOD')
         self.save()
