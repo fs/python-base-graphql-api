@@ -66,7 +66,7 @@ nitpick = "^0.26"
 
 hypothesis = "^6.13"
 
-mypy = "^0.812"
+mypy = "^0.931"
 django-stubs = "^1.8"
 
 sphinx = "^4.0"
