@@ -1476,7 +1476,7 @@ flake8-polyfill = ">=1.0.2,<2"
 name = "pexpect"
 version = "4.8.0"
 description = "Pexpect allows easy control of interactive console applications."
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -1564,7 +1564,7 @@ python-versions = ">=3.6"
 name = "ptyprocess"
 version = "0.7.0"
 description = "Run a subprocess in a pseudo terminal"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
