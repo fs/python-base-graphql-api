@@ -18,14 +18,21 @@ class RefreshTokenQuerySet(models.QuerySet):
         """Revoking all tokens for user."""
         self.get_active_tokens_for_sub(user.id).update(revoked_at=timezone.now())
 
+    def delete_inactive_tokens(self):
+        """Delete all inactive tokens."""
+        self.filter_active_tokens().delete()
+
     def get_active_tokens_for_sub(self, sub: Union[str, int], **kwargs):
         """Filter active tokens for JWT sub(user id)."""
         return self.filter_active_tokens(user__id=sub, **kwargs)
 
     def filter_active_tokens(self, **kwargs):
         """Filter all active tokens."""
-        expires_at_by_now = timezone.now() - jwt_settings.get('REFRESH_TOKEN_EXPIRATION_DELTA')
-        return self.filter(created_at__gt=expires_at_by_now, revoked_at__isnull=True, **kwargs)
+        return self.filter(expires_at__lt=timezone.now(), revoked_at__isnull=True, **kwargs)
+
+    def filter_inactive_tokens(self, **kwargs):
+        """Filter not active tokens."""
+        return self.exclude(expires_at__lt=timezone.now(), revoked_at__isnull=True, **kwargs)
 
     def access_token_is_active(self, jti: str, **kwargs) -> bool:
         """Check tokens is active by JTI. Usually uses for access token revoking check."""
@@ -45,7 +52,7 @@ class RefreshToken(models.Model):  # noqa: D101
     revoked_at = models.DateTimeField(null=True, blank=True)
     parent_token = models.OneToOneField(
         'RefreshToken',
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name='substitution_token',
