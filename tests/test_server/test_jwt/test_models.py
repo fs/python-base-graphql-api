@@ -25,7 +25,7 @@ class RefreshTokenTest(UserAuthenticatedTestCase):
     def test_is_expired(self):
         """Test is_expired property of instance."""
         refresh_token = self.refresh_token_instance
-        refresh_token.created_at = timezone.now()
+        refresh_token.expires_at = timezone.now()
         refresh_token.save()
 
         self.assertTrue(refresh_token.is_expired)

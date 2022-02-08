@@ -20,12 +20,9 @@ class ObtainPairMixin:
         if not isinstance(user, User):
             raise PermissionDenied()
 
-        refresh_token = RefreshToken.objects.create(**cls.generate_token_kwargs(user, parent_token))
-        access_token = cls.generate_access_token(refresh_token)
-        return {
-            'access_token': access_token,
-            'refresh_token': refresh_token.token,
-        }
+        token_kwargs = cls.generate_token_kwargs(user, parent_token)
+        refresh_token = RefreshToken.objects.create(**token_kwargs)
+        return cls.generate_token_pairs(refresh_token)
 
     @classmethod
     def generate_access_token(cls, refresh_token: RefreshToken) -> str:
@@ -35,7 +32,7 @@ class ObtainPairMixin:
         return jwt_encode(access_payload)
 
     @classmethod
-    def generate_token_kwargs(cls, user: User, parent_token: RefreshToken) -> Dict:
+    def generate_token_kwargs(cls, user: User, parent_token: RefreshToken = None) -> Dict:
         """Generate new token kwargs."""
         token_kwargs = {'user': user}
         if parent_token:
@@ -43,6 +40,15 @@ class ObtainPairMixin:
             parent_token.prolong_grace_period()
 
         return token_kwargs
+
+    @classmethod
+    def generate_token_pairs(cls, refresh_token: RefreshToken) -> Dict[str, str]:
+        """Generate token pairs by refresh token."""
+        access_token = cls.generate_access_token(refresh_token)
+        return {
+            'access_token': access_token,
+            'refresh_token': refresh_token.token,
+        }
 
 
 class RevokeTokenMixin:
@@ -71,11 +77,11 @@ class UpdateTokenPairMixin(ObtainPairMixin):
             raise PermissionDenied()
 
         refresh_token = request.refresh_token
-        if getattr(refresh_token, 'substitution_token', False):
-            refresh_token = refresh_token.substitution_token
-            access_token = cls.generate_access_token(refresh_token)
-            return {
-                'access_token': access_token,
-                'refresh_token': refresh_token,
-            }
+
+        if not refresh_token.is_active:
+            raise PermissionDenied()
+
+        if substitution_token := getattr(refresh_token, 'substitution_token', False):  # noqa:WPS332
+            return cls.generate_token_pairs(substitution_token)
+
         return cls.generate_pair(request.user, refresh_token)

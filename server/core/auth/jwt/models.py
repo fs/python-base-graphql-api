@@ -1,4 +1,3 @@
-from datetime import datetime, timedelta
 from typing import Dict, NoReturn, Union
 
 from django.conf import settings
@@ -50,6 +49,7 @@ class RefreshToken(models.Model):  # noqa: D101
         null=True,
         blank=True,
         related_name='substitution_token',
+        default=None,
     )
 
     objects = RefreshTokenManager()
@@ -64,7 +64,6 @@ class RefreshToken(models.Model):  # noqa: D101
 
     def save(self, *args, **kwargs):
         """Fields generation in save time."""
-
         if not self.created_at:
             self.created_at = timezone.now()
 
@@ -81,14 +80,9 @@ class RefreshToken(models.Model):  # noqa: D101
         return super().save(*args, **kwargs)
 
     @property
-    def expires_at(self) -> datetime:
-        """Compute expires at datetime."""
-        return self.created_at + jwt_settings.get('REFRESH_TOKEN_EXPIRATION_DELTA')
-
-    @property
     def is_expired(self) -> bool:
         """Refresh token expires."""
-        return self.expires_at > timezone.now()
+        return self.expires_at < timezone.now()
 
     @property
     def is_active(self) -> bool:
