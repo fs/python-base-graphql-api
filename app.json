@@ -1,0 +1,23 @@
+{
+    "name": "python_base_graphql_api",
+    "env": {
+      "SECRET_KEY": {
+        "generator": "secret"
+      }
+    },
+    "formation": {
+        "web": {
+          "quantity": 1,
+          "size": "Free"
+        }
+    },
+    "addons": ["heroku-postgresql", "heroku-redis"],
+    "buildpacks": [
+      {
+        "url": "heroku/python"      
+      },
+      {
+        "url":"https://github.com/moneymeets/python-poetry-buildpack.git"  
+      }
+    ]
+  }
