@@ -470,6 +470,20 @@ django = ">=3.2"
 django-ipware = ">=3"
 
 [[package]]
+name = "django-celery-beat"
+version = "2.2.1"
+description = "Database-backed Periodic Tasks."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+celery = ">=5.0,<6.0"
+Django = ">=2.2,<4.0"
+django-timezone-field = ">=4.1.0,<5.0"
+python-crontab = ">=2.3.4"
+
+[[package]]
 name = "django-coverage-plugin"
 version = "1.8.0"
 description = "Django template coverage.py plugin"
@@ -675,6 +689,21 @@ python-versions = ">=3.6"
 
 [package.dependencies]
 django = "*"
+
+[[package]]
+name = "django-timezone-field"
+version = "4.2.3"
+description = "A Django app providing database and form fields for pytz timezone objects."
+category = "main"
+optional = false
+python-versions = ">=3.5"
+
+[package.dependencies]
+django = ">=2.2"
+pytz = "*"
+
+[package.extras]
+rest_framework = ["djangorestframework (>=3.0.0)"]
 
 [[package]]
 name = "doc8"
@@ -1657,6 +1686,21 @@ python-versions = ">=3.6"
 diagrams = ["jinja2", "railroad-diagrams"]
 
 [[package]]
+name = "python-crontab"
+version = "2.6.0"
+description = "Python Crontab API"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+python-dateutil = "*"
+
+[package.extras]
+cron-description = ["cron-descriptor"]
+cron-schedule = ["croniter"]
+
+[[package]]
 name = "python-dateutil"
 version = "2.8.2"
 description = "Extensions to the standard Python datetime module"
@@ -2229,7 +2273,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = "3.8.10"
-content-hash = "decb98d7aa4195689bf4806ff2c33e9028672dba9bda813001e8e19cfcc0c15c"
+content-hash = "57cfa4846db71d52c2de55c5985606fa8640b2b9f9e3ea1f1d017d2775731bbb"
 
 [metadata.files]
 alabaster = [
@@ -2482,6 +2526,10 @@ django-axes = [
     {file = "django-axes-5.31.0.tar.gz", hash = "sha256:e6754be4c8a9e55a25381e4aea6aeb1ec1f0d8dd025f233d9caa910ce9be6728"},
     {file = "django_axes-5.31.0-py3-none-any.whl", hash = "sha256:17f1884a439d2a20495c0c03427922634ab7828cd030d9bc1ce3d0425917ff36"},
 ]
+django-celery-beat = [
+    {file = "django-celery-beat-2.2.1.tar.gz", hash = "sha256:97ae5eb309541551bdb07bf60cc57cadacf42a74287560ced2d2c06298620234"},
+    {file = "django_celery_beat-2.2.1-py2.py3-none-any.whl", hash = "sha256:ab43049634fd18dc037927d7c2c7d5f67f95283a20ebbda55f42f8606412e66c"},
+]
 django-coverage-plugin = [
     {file = "django_coverage_plugin-1.8.0.tar.gz", hash = "sha256:d53cbf3828fd83d6b89ff7292c6805de5274e36411711692043e67bcde25ae0c"},
 ]
@@ -2547,6 +2595,10 @@ django-stubs = [
 django-stubs-ext = [
     {file = "django-stubs-ext-0.2.0.tar.gz", hash = "sha256:c14f297835a42c1122421ec7e2d06579996b29d33b8016002762afa5d78863af"},
     {file = "django_stubs_ext-0.2.0-py3-none-any.whl", hash = "sha256:bd4a1e36ef2ba0ef15801933c85c68e59b383302c873795c6ecfc25950c7ecdb"},
+]
+django-timezone-field = [
+    {file = "django-timezone-field-4.2.3.tar.gz", hash = "sha256:5dd5bd9249382bef8847d3e7e4c32b7be182a4b538f354130d1252ed228892f8"},
+    {file = "django_timezone_field-4.2.3-py3-none-any.whl", hash = "sha256:7552d2b0f145684b7de3fb5046101c7efd600cc6ba951b15c630fa1e1b83558e"},
 ]
 doc8 = [
     {file = "doc8-0.8.1-py2.py3-none-any.whl", hash = "sha256:4d58a5c8c56cedd2b2c9d6e3153be5d956cf72f6051128f0f2255c66227df721"},
@@ -3164,6 +3216,9 @@ pyjwt = [
 pyparsing = [
     {file = "pyparsing-3.0.7-py3-none-any.whl", hash = "sha256:a6c06a88f252e6c322f65faf8f418b16213b51bdfaece0524c1c1bc30c63c484"},
     {file = "pyparsing-3.0.7.tar.gz", hash = "sha256:18ee9022775d270c55187733956460083db60b37d0d0fb357445f3094eed3eea"},
+]
+python-crontab = [
+    {file = "python-crontab-2.6.0.tar.gz", hash = "sha256:1e35ed7a3cdc3100545b43e196d34754e6551e7f95e4caebbe0e1c0ca41c2f1b"},
 ]
 python-dateutil = [
     {file = "python-dateutil-2.8.2.tar.gz", hash = "sha256:0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86"},

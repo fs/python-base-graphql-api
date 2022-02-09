@@ -12,3 +12,5 @@ INSTALLED_APPS += (
     'health_check.contrib.celery_ping',
     'health_check.contrib.redis',
 )
+
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'

@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'graphene_django',
     'django_filters',
+    'django_celery_beat',
 
     # Apps
     'server.core.auth.jwt',
