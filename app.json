@@ -11,6 +11,10 @@
         "web": {
           "quantity": 1,
           "size": "Free"
+        },
+        "worker": {
+          "quantity": 1,
+          "size": "Free"
         }
     },
     "addons": ["heroku-postgresql", "heroku-redis"],
