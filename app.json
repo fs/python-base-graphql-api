@@ -1,7 +1,6 @@
 {
     "name": "python_base_graphql_api",
     "repository": "https://github.com/fs/python-base-graphql-api",
-    "image": "heroku/python",
     "env": {
       "SECRET_KEY": {
         "generator": "secret"
