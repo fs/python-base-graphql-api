@@ -28,11 +28,15 @@ class RefreshTokenQuerySet(models.QuerySet):
 
     def filter_active_tokens(self, **kwargs):
         """Filter all active tokens."""
-        return self.filter(expires_at__lt=timezone.now(), revoked_at__isnull=True, **kwargs)
+        now = timezone.now()
+        expires_at_by_now = now - jwt_settings.get('REFRESH_TOKEN_EXPIRATION_DELTA')
+        return self.filter(created_at__gt=expires_at_by_now, revoked_at__gt=now, **kwargs)
 
     def filter_inactive_tokens(self, **kwargs):
         """Filter not active tokens."""
-        return self.exclude(expires_at__lt=timezone.now(), revoked_at__isnull=True, **kwargs)
+        now = timezone.now()
+        expires_at_by_now = now - jwt_settings.get('REFRESH_TOKEN_EXPIRATION_DELTA')
+        return self.exclude(created_at__gt=expires_at_by_now, revoked_at__gt=now, **kwargs)
 
     def access_token_is_active(self, jti: str, **kwargs) -> bool:
         """Check tokens is active by JTI. Usually uses for access token revoking check."""
@@ -48,7 +52,7 @@ class RefreshToken(models.Model):  # noqa: D101
     jti = models.CharField(max_length=255, editable=False)
     token = models.CharField(max_length=255, editable=False)
     created_at = models.DateTimeField()
-    expires_at = models.DateTimeField()
+    updated_at = models.DateTimeField(null=True, blank=True)
     revoked_at = models.DateTimeField(null=True, blank=True)
     parent_token = models.OneToOneField(
         'RefreshToken',
@@ -74,9 +78,6 @@ class RefreshToken(models.Model):  # noqa: D101
         if not self.created_at:
             self.created_at = timezone.now()
 
-        if not self.expires_at:
-            self.expires_at = self.created_at + jwt_settings.get('REFRESH_TOKEN_EXPIRATION_DELTA')
-
         if not self.jti:
             self.jti = user_utils.generate_hash_for_user(self.user, self.created_at)
 
@@ -85,6 +86,11 @@ class RefreshToken(models.Model):  # noqa: D101
             self.token = utils.jwt_encode(payload)
 
         return super().save(*args, **kwargs)
+
+    @property
+    def expires_at(self):
+        """Compute expires at datetime."""
+        return self.created_at + jwt_settings.get('REFRESH_TOKEN_EXPIRATION_DELTA')
 
     @property
     def is_expired(self) -> bool:
@@ -107,5 +113,5 @@ class RefreshToken(models.Model):  # noqa: D101
 
     def prolong_grace_period(self) -> NoReturn:
         """Prolong token grace period."""
-        self.expires_at = timezone.now() + jwt_settings.get('TOKEN_GRACE_PERIOD')
+        self.revoked_at = timezone.now() + jwt_settings.get('TOKEN_GRACE_PERIOD')
         self.save()

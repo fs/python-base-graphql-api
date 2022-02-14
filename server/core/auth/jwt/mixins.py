@@ -22,7 +22,7 @@ class ObtainPairMixin:
 
         token_kwargs = cls.generate_token_kwargs(user, parent_token)
         refresh_token = RefreshToken.objects.create(**token_kwargs)
-        return cls.generate_token_pairs(refresh_token)
+        return cls.get_tokens_pair(refresh_token)
 
     @classmethod
     def generate_access_token(cls, refresh_token: RefreshToken) -> str:
@@ -42,7 +42,7 @@ class ObtainPairMixin:
         return token_kwargs
 
     @classmethod
-    def generate_token_pairs(cls, refresh_token: RefreshToken) -> Dict[str, str]:
+    def get_tokens_pair(cls, refresh_token: RefreshToken) -> Dict[str, str]:
         """Generate token pairs by refresh token."""
         access_token = cls.generate_access_token(refresh_token)
         return {
@@ -82,6 +82,6 @@ class UpdateTokenPairMixin(ObtainPairMixin):
             raise PermissionDenied()
 
         if substitution_token := getattr(refresh_token, 'substitution_token', False):  # noqa:WPS332
-            return cls.generate_token_pairs(substitution_token)
+            return cls.get_tokens_pair(substitution_token)
 
         return cls.generate_pair(request.user, refresh_token)
