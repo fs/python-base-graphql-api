@@ -16,7 +16,7 @@ authors = ["myapp.com"]
 
 
 [tool.poetry.dependencies]
-python = "3.8.1"
+python = "3.8.10"
 
 django = "^3.2.3"
 django-split-settings = "^1.0"
@@ -42,10 +42,11 @@ boto3 = "^1.17.92"
 
 graphene = {version = "^3.0.0b7", allow-prereleases = true}
 graphene-django = {version = "3.0b7", allow-prereleases = true}
-graphql-core = "3.1.5"
+graphql-core = "^3.1.5"
 celery = "^5.1.2"
 hypothesis = "^6.14.5"
 snapshottest = "^0.6.0"
+mypy = "^0.941"
 django-celery-beat = "^2.2.1"
 
 
@@ -67,7 +68,6 @@ nitpick = "^0.26"
 
 hypothesis = "^6.13"
 
-mypy = "^0.812"
 django-stubs = "^1.8"
 
 sphinx = "^4.0"
