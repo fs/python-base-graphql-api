@@ -15,5 +15,4 @@ def send_recovery_email(reset_token_pk):
 def clear_not_active_tokens(*args, **kwargs):
     """Sending recovery email in background."""
     ResetToken.objects.delete_inactive_tokens()
-    print('a')
     logger.info('a+1')

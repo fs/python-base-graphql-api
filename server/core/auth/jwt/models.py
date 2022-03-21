@@ -30,13 +30,20 @@ class RefreshTokenQuerySet(models.QuerySet):
         """Filter all active tokens."""
         now = timezone.now()
         expires_at_by_now = now - jwt_settings.get('REFRESH_TOKEN_EXPIRATION_DELTA')
-        return self.filter(created_at__gt=expires_at_by_now, revoked_at__gt=now, **kwargs)
+        return self.filter(
+            models.Q(created_at__gt=expires_at_by_now) &
+            (
+                models.Q(revoked_at__gt=now) |
+                models.Q(revoked_at__isnull=True)
+            ) &
+            models.Q(**kwargs),
+        )
 
     def filter_inactive_tokens(self, **kwargs):
         """Filter not active tokens."""
         now = timezone.now()
         expires_at_by_now = now - jwt_settings.get('REFRESH_TOKEN_EXPIRATION_DELTA')
-        return self.exclude(created_at__gt=expires_at_by_now, revoked_at__gt=now, **kwargs)
+        return self.exclude(created_at__lt=expires_at_by_now, revoked_at__lt=now, **kwargs)
 
     def access_token_is_active(self, jti: str, **kwargs) -> bool:
         """Check tokens is active by JTI. Usually uses for access token revoking check."""
@@ -87,17 +94,17 @@ class RefreshToken(models.Model):  # noqa: D101
 
         return super().save(*args, **kwargs)
 
-    @property
+    @ property
     def expires_at(self):
         """Compute expires at datetime."""
         return self.created_at + jwt_settings.get('REFRESH_TOKEN_EXPIRATION_DELTA')
 
-    @property
+    @ property
     def is_expired(self) -> bool:
         """Refresh token expires."""
         return self.expires_at < timezone.now()
 
-    @property
+    @ property
     def is_active(self) -> bool:
         """Check refresh token is active: is not revoked and not expired."""
         return not (self.revoked_at is not None or self.is_expired)
