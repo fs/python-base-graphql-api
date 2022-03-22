@@ -46,11 +46,11 @@ class RefreshTokenQuerySet(models.QuerySet):
         return self.exclude(
             models.Q(created_at__lt=expires_at_by_now) |
             models.Q(revoked_at__lt=now) &
-            models.Q(**kwargs)
+            models.Q(**kwargs),
         )
 
     def access_token_is_active(self, jti: str, **kwargs) -> bool:
-        """Check tokens is active by JTI. Usually uses for access token revoking check."""
+        """Check tokens is active by JTI. Usually us    es for access token revoking check."""
         return self.filter_active_tokens(jti=jti, **kwargs).exists()
 
 
@@ -98,17 +98,17 @@ class RefreshToken(models.Model):  # noqa: D101
 
         return super().save(*args, **kwargs)
 
-    @ property
+    @property
     def expires_at(self):
         """Compute expires at datetime."""
         return self.created_at + jwt_settings.get('REFRESH_TOKEN_EXPIRATION_DELTA')
 
-    @ property
+    @property
     def is_expired(self) -> bool:
         """Refresh token expires."""
         return self.expires_at < timezone.now()
 
-    @ property
+    @property
     def is_active(self) -> bool:
         """Check refresh token is active: is not revoked and not expired."""
         return not (self.revoked_at is not None or self.is_expired)

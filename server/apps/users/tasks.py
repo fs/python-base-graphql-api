@@ -12,8 +12,8 @@ def send_recovery_email(reset_token_pk):
         reset_token.send_recovery_mail()
 
 
-@app.task(bind=True)
+@app.task(ignore_result=True)
 def clear_not_active_tokens(*args, **kwargs):
-    """Sending recovery email in background."""
+    """Clear not active tokens task."""
     RefreshToken.objects.delete_inactive_tokens()
     logger.info('Remove inactive tokens')

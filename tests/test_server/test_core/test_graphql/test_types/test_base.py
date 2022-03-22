@@ -2,7 +2,7 @@
 import graphene
 from django.apps import apps
 from django.db import models
-from django.test import TestCase, modify_settings
+from django.test import TestCase
 from graphene_django import DjangoObjectType
 from server.core.graphql.types.base import DescriptionDrivenDjangoObjectType
 

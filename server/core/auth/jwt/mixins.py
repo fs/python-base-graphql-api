@@ -15,7 +15,7 @@ class ObtainPairMixin:
     """Mixin for tokens pair generation by user."""
 
     @classmethod
-    def generate_pair(cls, user: User, parent_token: RefreshToken = None) -> Dict[str, str]:
+    def generate_pair(cls, user: User, parent_token: Optional[RefreshToken] = None) -> Dict[str, str]:
         """Create tokens pair with same JTI."""
         if not isinstance(user, User):
             raise PermissionDenied()
@@ -32,7 +32,7 @@ class ObtainPairMixin:
         return jwt_encode(access_payload)
 
     @classmethod
-    def generate_token_kwargs(cls, user: User, parent_token: RefreshToken = None) -> Dict:
+    def generate_token_kwargs(cls, user: User, parent_token: Optional[RefreshToken] = None) -> Dict:
         """Generate new token kwargs."""
         token_kwargs = {'user': user}
         if parent_token:
