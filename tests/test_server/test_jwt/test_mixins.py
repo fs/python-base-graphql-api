@@ -51,8 +51,10 @@ class RevokeTokenMixinTest(mixins.RevokeTokenMixin, MiddlewareSetupMixin, UserAu
         authenticated_info = self.get_authenticated_info_context()
         everywhere = False
         self.generate_refresh_tokens()
-        self.logout(request=authenticated_info.context, everywhere=everywhere)
-        self.assertFalse(self.refresh_token_instance.is_active)
+        request = authenticated_info.context
+        self.logout(request=request, everywhere=everywhere)
+        user = request.user
+        self.assertFalse(user.refresh_tokens.get(token=self.refresh_token_instance.token).is_active)
         self.assertTrue(RefreshToken.objects.get_active_tokens_for_sub(self.user.pk).exists())
 
     def generate_refresh_tokens(self):
