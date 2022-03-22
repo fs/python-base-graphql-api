@@ -50,7 +50,7 @@ class RefreshTokenQuerySet(models.QuerySet):
         )
 
     def access_token_is_active(self, jti: str, **kwargs) -> bool:
-        """Check tokens is active by JTI. Usually us    es for access token revoking check."""
+        """Check tokens is active by JTI. Usually uses for access token revoking check."""
         return self.filter_active_tokens(jti=jti, **kwargs).exists()
 
 
@@ -109,9 +109,14 @@ class RefreshToken(models.Model):  # noqa: D101
         return self.expires_at < timezone.now()
 
     @property
+    def is_revoked(self) -> bool:
+        """Check is token revoked."""
+        return self.revoked_at is not None and self.revoked_at < timezone.now()
+
+    @property
     def is_active(self) -> bool:
         """Check refresh token is active: is not revoked and not expired."""
-        return not (self.revoked_at is not None or self.is_expired)
+        return not (self.is_revoked or self.is_expired)
 
     def get_payload_by_token(self) -> Dict[str, Union[int, str]]:
         """Token decoding by JWT algorithm."""
