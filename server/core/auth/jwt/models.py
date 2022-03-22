@@ -43,7 +43,11 @@ class RefreshTokenQuerySet(models.QuerySet):
         """Filter not active tokens."""
         now = timezone.now()
         expires_at_by_now = now - jwt_settings.get('REFRESH_TOKEN_EXPIRATION_DELTA')
-        return self.exclude(created_at__lt=expires_at_by_now, revoked_at__lt=now, **kwargs)
+        return self.exclude(
+            models.Q(created_at__lt=expires_at_by_now) |
+            models.Q(revoked_at__lt=now) &
+            models.Q(**kwargs)
+        )
 
     def access_token_is_active(self, jti: str, **kwargs) -> bool:
         """Check tokens is active by JTI. Usually uses for access token revoking check."""
