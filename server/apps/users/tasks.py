@@ -1,6 +1,7 @@
 from celery import shared_task
 from server.apps.users.models import ResetToken
 from server.celery import app, logger
+from server.core.auth.jwt.models import RefreshToken
 
 
 @shared_task(ignore_result=True)
@@ -14,5 +15,5 @@ def send_recovery_email(reset_token_pk):
 @app.task(bind=True)
 def clear_not_active_tokens(*args, **kwargs):
     """Sending recovery email in background."""
-    ResetToken.objects.delete_inactive_tokens()
-    logger.info('a+1')
+    RefreshToken.objects.delete_inactive_tokens()
+    logger.info('Remove inactive tokens')

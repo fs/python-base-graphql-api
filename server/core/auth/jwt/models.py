@@ -20,7 +20,7 @@ class RefreshTokenQuerySet(models.QuerySet):
 
     def delete_inactive_tokens(self):
         """Delete all inactive tokens."""
-        self.filter_active_tokens().delete()
+        self.filter_inactive_tokens().delete()
 
     def get_active_tokens_for_sub(self, sub: Union[str, int], **kwargs):
         """Filter active tokens for JWT sub(user id)."""
