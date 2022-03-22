@@ -7,9 +7,6 @@ from graphene_django import DjangoObjectType
 from server.core.graphql.types.base import DescriptionDrivenDjangoObjectType
 
 
-@modify_settings(INSTALLED_APPS={
-    'append': 'tests.test_server.test_core.test_graphql',
-})
 class TestDescriptionDrivenDjangoObjectType(TestCase):
     """Tests for checking filling description from Django model, interface, and ObjectType."""
 
@@ -30,7 +27,6 @@ class TestDescriptionDrivenDjangoObjectType(TestCase):
 
     def test_no_built_in_description_from_field(self):
         """Check no description from model's field using Type with DjangoObjectType."""
-        from tests.test_server.test_core.test_graphql.models import Person
 
         class PersonType(DjangoObjectType):
             class Meta:
