@@ -1,6 +1,7 @@
 import graphene
 from django.contrib.auth import get_user_model
 from graphene_django import DjangoObjectType
+from server.apps.users.choices import UserActivityChoices
 from server.apps.users.models import UserActivity
 from server.core.auth.jwt.decorators import login_required
 
@@ -43,13 +44,16 @@ class UserActivityType(DjangoObjectType):
         """Resolve event choices display name."""
         return self.get_event_display()
 
-    # TODO: make body
     def resolve_body(self, info):
         """Resolve event description."""
-        return 'TEST'
+        return UserActivityChoices.EVENT_BODIES[self.event].format(
+            first_name=self.user.first_name,
+            last_name=self.user.last_name,
+            email=self.user.email,
+        )
 
     @classmethod
     @login_required
     def get_queryset(cls, queryset, info):
         """Method for wrap user activity data in login_required decorator."""
-        return queryset
+        return queryset.select_related('user')
