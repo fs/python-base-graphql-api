@@ -6,10 +6,7 @@ from django.contrib.auth.models import UserManager as DjangoUserManager
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from server.apps.users.choices import UserActivityChoices
-from server.apps.users.exceptions import UserAlreadyJoined
-from server.apps.users.storages import S3DirectUploadStorage
-from server.apps.users.utils import send_recovery_email
+from server.apps.users import choices, exceptions, storages, utils
 from server.core.auth import utils as user_utils
 
 
@@ -22,7 +19,7 @@ class UserManager(DjangoUserManager):
         extra_fields.setdefault('is_superuser', False)
 
         if User.objects.filter(email=email).exists():
-            raise UserAlreadyJoined()
+            raise exceptions.UserAlreadyJoined()
 
         return self._create_user(email, **extra_fields)
 
@@ -64,7 +61,7 @@ class User(AbstractUser):
     """Custom user model."""
 
     email = models.EmailField(_('email address'), unique=True)
-    avatar = models.ImageField(null=True, blank=True, storage=S3DirectUploadStorage())
+    avatar = models.ImageField(null=True, blank=True, storage=storages.S3DirectUploadStorage())
 
     objects = UserManager()
 
@@ -76,7 +73,7 @@ class User(AbstractUser):
 class UserActivity(models.Model):
     """User activity logging in DB."""
 
-    event = models.CharField(max_length=255, choices=UserActivityChoices.EVENT_CHOICES)
+    event = models.CharField(max_length=255, choices=choices.UserActivityChoices.EVENT_CHOICES)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='activities')
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -142,7 +139,7 @@ class ResetToken(models.Model):  # noqa: D101
 
     def send_recovery_mail(self):
         """Send email to user with instructions."""
-        send_recovery_email(
+        utils.send_recovery_email(
             self.user.first_name,
             self.user.last_name,
             self.token,

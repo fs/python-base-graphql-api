@@ -1,4 +1,6 @@
 class UserActivityChoices:
+    """UserActivity choices."""
+
     USER_LOGGED_IN = 'USER_LOGGED_IN'
     USER_REGISTERED = 'USER_REGISTERED'
     USER_RESET_PASSWORD = 'USER_RESET_PASSWORD'
@@ -14,9 +16,12 @@ class UserActivityChoices:
     )
 
     EVENT_BODIES = {
-        USER_LOGGED_IN: 'User logged in with the next attributes:\n First name - {first_name},\n Last name - {last_name}\n',
-        USER_REGISTERED: 'New user registered with the next attributes:\n First name - {first_name},\n Last name - {last_name}\n',
+        USER_LOGGED_IN: 'User logged in with the next attributes:\n First name - {first_name},\n' +
+        ' Last name - {last_name}\n',
+        USER_REGISTERED: 'New user registered with the next attributes:\n First name - {first_name},\n' +
+        ' Last name - {last_name}\n',
         USER_RESET_PASSWORD: 'User reset password',
         RESET_PASSWORD_REQUESTED: 'User requested reset password instructions',
-        USER_UPDATED: 'User updated with the next attributes:\n First name - {first_name},\n Last name - {last_name},\n Email - {email}\n',
+        USER_UPDATED: 'User updated with the next attributes:\n First name - {first_name},\n' +
+        ' Last name - {last_name},\n Email - {email}\n',
     }
